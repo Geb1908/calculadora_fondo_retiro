@@ -1,0 +1,2392 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora dinámica — Plan de retiro con inmueble + cartera</title>
+  <style>
+    :root {
+      --page: #f4f7fb;
+      --page-2: #eef3fb;
+      --surface: #ffffff;
+      --surface-2: #f8fbff;
+      --ink: #172033;
+      --muted: #657086;
+      --soft: #e6edf7;
+      --line: #dbe4f0;
+      --line-strong: #c8d5e6;
+      --brand: #2f6df6;
+      --brand-2: #7457d8;
+      --brand-soft: #eaf1ff;
+      --good: #127a53;
+      --good-soft: #e8f7f0;
+      --warn: #9b6712;
+      --warn-soft: #fff4d8;
+      --bad: #b72b45;
+      --bad-soft: #ffe9ee;
+      --radius: 20px;
+      --shadow: 0 18px 50px rgba(23, 32, 51, .10);
+      --shadow-soft: 0 8px 24px rgba(23, 32, 51, .07);
+      --max: 1380px;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html {
+      scroll-behavior: smooth;
+      max-width: 100%;
+      overflow-x: hidden
+    }
+
+    body {
+      margin: 0;
+      max-width: 100%;
+      overflow-x: hidden;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(47, 109, 246, .16), transparent 34rem),
+        radial-gradient(circle at 88% 3%, rgba(116, 87, 216, .13), transparent 30rem),
+        linear-gradient(180deg, #fbfdff 0%, var(--page) 36%, var(--page-2) 100%);
+      line-height: 1.45;
+      font-variant-numeric: tabular-nums;
+    }
+
+    img,
+    svg,
+    canvas {
+      max-width: 100%;
+      height: auto
+    }
+
+    body,
+    input,
+    select,
+    button,
+    table {
+      font-variant-numeric: tabular-nums
+    }
+
+    a {
+      color: inherit
+    }
+
+    p {
+      margin: 0 0 12px;
+      color: var(--muted)
+    }
+
+    strong {
+      color: var(--ink)
+    }
+
+    header {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 30px 22px 14px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(310px, .65fr);
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .74);
+      color: #2d426b;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .02em;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      max-width: 860px;
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: .98;
+      letter-spacing: -.055em;
+      color: #10192b;
+    }
+
+    h2 {
+      font-size: clamp(20px, 2vw, 25px);
+      margin: 0;
+      letter-spacing: -.025em;
+      color: #131c2f
+    }
+
+    h3 {
+      font-size: 16px;
+      margin: 0 0 10px;
+      color: #1e2a42
+    }
+
+    .subtitle {
+      max-width: 850px;
+      font-size: 16px;
+      color: #5c6880;
+    }
+
+    .pillbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 18px;
+      max-width: 100%
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .78);
+      color: #33435d;
+      font-size: 13px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .hero-card,
+    .card,
+    .control-panel {
+      background: rgba(255, 255, 255, .88);
+      border: 1px solid rgba(219, 228, 240, .95);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero-card {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+
+    .label,
+    .kpi .title {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: .055em;
+    }
+
+    .big {
+      font-size: clamp(30px, 4vw, 43px);
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -.045em;
+      color: #111b2e;
+      margin: 8px 0 8px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px
+    }
+
+    .mini-stat {
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(180deg, #fff, var(--surface-2));
+      overflow-wrap: anywhere;
+    }
+
+    .mini-stat .big {
+      font-size: 24px;
+      margin: 7px 0 0
+    }
+
+    .quick-nav {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 22px 20px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .quick-nav a {
+      text-decoration: none;
+      color: #2a3c5d;
+      background: rgba(255, 255, 255, .80);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .quick-nav a:hover {
+      border-color: #b9c7db;
+      background: #fff
+    }
+
+    main {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 22px 42px
+    }
+
+    .layout {
+      display: block;
+      min-width: 0
+    }
+
+    .control-panel {
+      margin-bottom: 22px;
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .control-header {
+      display: flex;
+      gap: 14px;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .control-header p {
+      max-width: 760px;
+      margin: 6px 0 0;
+      font-size: 14px
+    }
+
+    .control-actions {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      min-width: 0
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 14px;
+      align-items: start;
+    }
+
+    .control-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, #fff, var(--surface-2));
+      padding: 15px;
+      min-width: 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .control-card.primary {
+      grid-column: span 7
+    }
+
+    .control-card.timing {
+      grid-column: span 5
+    }
+
+    .control-card.rates {
+      grid-column: span 7
+    }
+
+    .control-card.portfolio {
+      grid-column: span 5
+    }
+
+    .control-card h3 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 3px
+    }
+
+    .control-card .card-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 12px;
+      align-items: start
+    }
+
+    .input-grid.compact {
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr))
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: #3b4b65;
+      margin-bottom: 6px;
+      font-weight: 800
+    }
+
+    .hint {
+      font-size: 11.5px;
+      color: #778399;
+      margin-top: 5px
+    }
+
+    .label-with-tip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+      max-width: 100%;
+      vertical-align: middle
+    }
+
+    .tip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+      border-radius: 999px;
+      border: 1px solid #b8c9e6;
+      background: var(--brand-soft);
+      color: #275ad1;
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1;
+      cursor: help;
+      user-select: none;
+      outline: none;
+    }
+
+    .tip::after,
+    .tip::before {
+      display: none !important;
+      content: none !important
+    }
+
+    .tip.active {
+      border-color: var(--brand);
+      background: #dce8ff;
+      box-shadow: 0 0 0 3px rgba(47, 109, 246, .14)
+    }
+
+    .tooltip-layer {
+      position: fixed;
+      z-index: 2147483647;
+      left: 0;
+      top: 0;
+      width: min(360px, calc(100vw - 24px));
+      max-height: min(44vh, 360px);
+      overflow-y: auto;
+      padding: 11px 12px;
+      border-radius: 14px;
+      background: #10192b;
+      border: 1px solid rgba(255, 255, 255, .14);
+      color: #f5f8ff;
+      box-shadow: 0 24px 60px rgba(16, 25, 43, .34);
+      font-size: 12.5px;
+      line-height: 1.38;
+      font-weight: 650;
+      text-align: left;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(4px);
+      transition: opacity .14s ease, transform .14s ease, visibility .14s ease;
+    }
+
+    .tooltip-layer.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0)
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-width: 0;
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid #cdd8e8;
+      border-radius: 12px;
+      padding: 10px 11px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color .14s ease, box-shadow .14s ease, background .14s ease;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 4px rgba(47, 109, 246, .13);
+      background: #fcfdff
+    }
+
+    input[type="checkbox"] {
+      width: auto;
+      transform: translateY(1px)
+    }
+
+    .checkrow {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      margin-top: 12px;
+      color: #536078;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .btnrow {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      min-width: 0
+    }
+
+    button {
+      border: 0;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: white;
+      border-radius: 12px;
+      padding: 10px 13px;
+      min-height: 42px;
+      font-weight: 850;
+      cursor: pointer;
+      box-shadow: 0 12px 26px rgba(47, 109, 246, .18);
+    }
+
+    button.secondary {
+      background: #fff;
+      color: #253756;
+      border: 1px solid var(--line-strong);
+      box-shadow: var(--shadow-soft)
+    }
+
+    button.danger {
+      background: var(--bad-soft);
+      color: var(--bad);
+      border: 1px solid #ffc0cc;
+      box-shadow: none
+    }
+
+    button:hover {
+      filter: brightness(1.03);
+      transform: translateY(-1px)
+    }
+
+    .results {
+      display: grid;
+      gap: 18px;
+      min-width: 0
+    }
+
+    .card {
+      padding: 18px;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+      min-width: 0;
+      flex-wrap: wrap
+    }
+
+    .section-title small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px
+    }
+
+    .kpi {
+      background: linear-gradient(180deg, #fff, var(--surface-2));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      min-height: 126px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: var(--shadow-soft);
+      overflow-wrap: anywhere;
+    }
+
+    .kpi:before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: var(--brand)
+    }
+
+    .kpi.good:before {
+      background: var(--good)
+    }
+
+    .kpi.warn:before {
+      background: #e7a323
+    }
+
+    .kpi.bad:before {
+      background: var(--bad)
+    }
+
+    .kpi .value {
+      font-size: clamp(21px, 2.2vw, 28px);
+      font-weight: 950;
+      letter-spacing: -.035em;
+      margin: 10px 0 5px;
+      line-height: 1.06;
+      color: #10192b
+    }
+
+    .kpi .sub {
+      font-size: 12.5px;
+      color: #68758b
+    }
+
+    .status {
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      background: #fff;
+      box-shadow: var(--shadow-soft);
+      overflow-wrap: anywhere;
+    }
+
+    .status.good {
+      background: var(--good-soft);
+      border-color: #bfe8d6
+    }
+
+    .status.warn {
+      background: var(--warn-soft);
+      border-color: #f1d694
+    }
+
+    .status.bad {
+      background: var(--bad-soft);
+      border-color: #ffc0cc
+    }
+
+    .status .icon {
+      font-size: 24px;
+      line-height: 1
+    }
+
+    .status strong {
+      display: block;
+      margin-bottom: 3px;
+      color: #10192b
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .negative {
+      color: var(--bad);
+      font-weight: 850
+    }
+
+    .positive {
+      color: var(--good);
+      font-weight: 850
+    }
+
+    .warning {
+      color: var(--warn);
+      font-weight: 850
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px
+    }
+
+    .note {
+      background: var(--brand-soft);
+      border: 1px solid #cfe0ff;
+      border-radius: 16px;
+      padding: 14px;
+      color: #263a63;
+      font-size: 13.5px;
+      overflow-wrap: anywhere;
+    }
+
+    .note.warn {
+      background: var(--warn-soft);
+      border-color: #f1d694;
+      color: #6f4a10
+    }
+
+    .note.bad {
+      background: var(--bad-soft);
+      border-color: #ffc0cc;
+      color: #8b1f35
+    }
+
+    .bar-table {
+      display: grid;
+      gap: 11px
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: minmax(145px, 210px) minmax(0, 1fr) minmax(66px, 90px);
+      gap: 12px;
+      align-items: center;
+      font-size: 13.5px;
+      min-width: 0
+    }
+
+    .bar-track {
+      height: 13px;
+      background: #e8eef7;
+      border-radius: 999px;
+      border: 1px solid #d7e1ee;
+      overflow: hidden;
+      min-width: 0
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+      border-radius: 999px;
+      width: 0%
+    }
+
+    .table-wrap {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #fff
+    }
+
+    table {
+      width: 100%;
+      max-width: 100%;
+      border-collapse: collapse;
+      min-width: 0;
+      background: #fff;
+      table-layout: fixed
+    }
+
+    th,
+    td {
+      padding: 11px 10px;
+      border-bottom: 1px solid #e7edf5;
+      font-size: 12.5px;
+      text-align: right;
+      white-space: normal;
+      vertical-align: top;
+      overflow-wrap: break-word;
+      word-break: normal;
+      color: #25334a;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left
+    }
+
+    td:last-child {
+      white-space: normal;
+      min-width: 0
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #f1f5fb;
+      color: #536078;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .055em;
+      z-index: 1;
+      font-weight: 950;
+    }
+
+    tr:hover td {
+      background: #f9fbff
+    }
+
+    .allocation-table th:nth-child(1),
+    .allocation-table td:nth-child(1) {
+      width: 18%
+    }
+
+    .allocation-table th:nth-child(2),
+    .allocation-table td:nth-child(2) {
+      width: 15%
+    }
+
+    .allocation-table th:nth-child(3),
+    .allocation-table td:nth-child(3) {
+      width: 13%
+    }
+
+    .allocation-table th:nth-child(4),
+    .allocation-table td:nth-child(4) {
+      width: 9%
+    }
+
+    .allocation-table th:nth-child(5),
+    .allocation-table td:nth-child(5) {
+      width: 12%
+    }
+
+    .allocation-table th:nth-child(6),
+    .allocation-table td:nth-child(6) {
+      width: 14%
+    }
+
+    .allocation-table th:nth-child(7),
+    .allocation-table td:nth-child(7) {
+      width: 19%
+    }
+
+    .projection-table th:nth-child(1),
+    .projection-table td:nth-child(1) {
+      width: 5%
+    }
+
+    .projection-table th:nth-child(2),
+    .projection-table td:nth-child(2) {
+      width: 8%
+    }
+
+    .projection-table th:nth-child(3),
+    .projection-table td:nth-child(3) {
+      width: 7%
+    }
+
+    .projection-table th:nth-child(4),
+    .projection-table td:nth-child(4) {
+      width: 8%
+    }
+
+    .projection-table th:nth-child(5),
+    .projection-table td:nth-child(5) {
+      width: 10%
+    }
+
+    .projection-table th:nth-child(6),
+    .projection-table td:nth-child(6) {
+      width: 9%
+    }
+
+    .projection-table th:nth-child(7),
+    .projection-table td:nth-child(7) {
+      width: 10%
+    }
+
+    .projection-table th:nth-child(8),
+    .projection-table td:nth-child(8) {
+      width: 10%
+    }
+
+    .projection-table th:nth-child(9),
+    .projection-table td:nth-child(9) {
+      width: 9%
+    }
+
+    .projection-table th:nth-child(10),
+    .projection-table td:nth-child(10) {
+      width: 9%
+    }
+
+    .projection-table th:nth-child(11),
+    .projection-table td:nth-child(11) {
+      width: 15%
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px
+    }
+
+    .scenario {
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: linear-gradient(180deg, #fff, var(--surface-2));
+      box-shadow: var(--shadow-soft);
+      overflow-wrap: anywhere;
+    }
+
+    .scenario .name {
+      font-weight: 950;
+      margin-bottom: 7px;
+      color: #111b2e
+    }
+
+    .scenario .line {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      border-top: 1px solid #e6edf7;
+      padding-top: 8px;
+      margin-top: 8px;
+      color: var(--muted);
+      min-width: 0
+    }
+
+    .scenario .line strong {
+      text-align: right;
+      min-width: 0;
+      color: #1c2b45
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 13px;
+      background: #fff
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 900;
+      color: #172033
+    }
+
+    .help-box {
+      display: grid;
+      gap: 0;
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff
+    }
+
+    .help-row {
+      display: grid;
+      grid-template-columns: minmax(170px, 240px) minmax(0, 1fr);
+      gap: 12px;
+      padding: 11px 12px;
+      border-top: 1px solid #e7edf5;
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .help-row:first-child {
+      border-top: 0
+    }
+
+    .help-row strong {
+      color: #172033
+    }
+
+    .footer {
+      color: #7b879b;
+      font-size: 12px;
+      margin-top: 16px
+    }
+
+    .print-only {
+      display: none
+    }
+
+    section[id] {
+      scroll-margin-top: 16px
+    }
+
+    @media (max-width:1180px) {
+      .hero {
+        grid-template-columns: 1fr
+      }
+
+      .control-card.primary,
+      .control-card.timing,
+      .control-card.rates,
+      .control-card.portfolio {
+        grid-column: span 12
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+      }
+
+      .scenario-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+      }
+    }
+
+    @media (max-width:900px) {
+      header {
+        padding: 24px 14px 10px
+      }
+
+      main {
+        padding: 0 14px 32px
+      }
+
+      .quick-nav {
+        padding: 0 14px 16px;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch
+      }
+
+      .quick-nav a {
+        white-space: nowrap
+      }
+
+      .control-header {
+        display: grid;
+        gap: 10px
+      }
+
+      .control-actions {
+        justify-content: flex-start
+      }
+
+      .split,
+      .scenario-grid {
+        grid-template-columns: 1fr
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .table-wrap {
+        overflow: visible;
+        border: 0;
+        background: transparent;
+        border-radius: 0
+      }
+
+      table.responsive-table {
+        min-width: 0;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+        background: transparent
+      }
+
+      table.responsive-table thead {
+        display: none
+      }
+
+      table.responsive-table,
+      table.responsive-table tbody,
+      table.responsive-table tr,
+      table.responsive-table td {
+        display: block;
+        width: 100%
+      }
+
+      table.responsive-table th,
+      table.responsive-table td {
+        width: 100% !important
+      }
+
+      table.responsive-table tr {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 8px 11px;
+        margin-bottom: 10px;
+        box-shadow: var(--shadow-soft)
+      }
+
+      table.responsive-table tr:hover td {
+        background: transparent
+      }
+
+      table.responsive-table td {
+        display: grid;
+        grid-template-columns: minmax(130px, 42%) minmax(0, 1fr);
+        gap: 10px;
+        text-align: right;
+        white-space: normal;
+        border-bottom: 1px solid #e7edf5;
+        padding: 8px 0;
+        min-width: 0
+      }
+
+      table.responsive-table td:last-child {
+        border-bottom: 0;
+        min-width: 0
+      }
+
+      table.responsive-table td::before {
+        content: attr(data-label);
+        text-align: left;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        font-weight: 950
+      }
+
+      table.responsive-table td:first-child {
+        text-align: right
+      }
+    }
+
+    @media (max-width:640px) {
+      h1 {
+        font-size: clamp(31px, 11vw, 42px)
+      }
+
+      .subtitle {
+        font-size: 15px
+      }
+
+      .pill {
+        width: 100%;
+        align-items: flex-start
+      }
+
+      .hero-card,
+      .control-panel,
+      .card {
+        padding: 14px;
+        border-radius: 17px
+      }
+
+      .hero-grid,
+      .kpi-grid,
+      .input-grid {
+        grid-template-columns: 1fr
+      }
+
+      .bar-row {
+        grid-template-columns: 1fr;
+        gap: 7px;
+        padding: 10px 0;
+        border-bottom: 1px solid #e7edf5
+      }
+
+      .bar-row:last-child {
+        border-bottom: 0
+      }
+
+      .bar-row>div:last-child {
+        text-align: left;
+        font-weight: 900
+      }
+
+      .status {
+        grid-template-columns: 1fr;
+        gap: 8px
+      }
+
+      .btnrow,
+      .control-actions {
+        width: 100%
+      }
+
+      .btnrow button,
+      .control-actions button {
+        flex: 1 1 150px
+      }
+
+      input,
+      select {
+        font-size: 16px
+      }
+
+      .scenario .line {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 4px
+      }
+
+      .scenario .line strong {
+        text-align: left
+      }
+
+      .help-row {
+        grid-template-columns: 1fr;
+        gap: 5px
+      }
+
+      table.responsive-table td {
+        grid-template-columns: 1fr;
+        text-align: left;
+        gap: 3px
+      }
+
+      table.responsive-table td:first-child {
+        text-align: left
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+        color: #111
+      }
+
+      .no-print,
+      .quick-nav,
+      .control-panel {
+        display: none !important
+      }
+
+      .card,
+      .kpi,
+      .status,
+      .hero-card {
+        box-shadow: none;
+        border-color: #ccc;
+        background: white;
+        color: #111
+      }
+
+      .muted,
+      p,
+      .kpi .sub,
+      .kpi .title {
+        color: #444
+      }
+
+      th {
+        background: #eee;
+        color: #111
+      }
+
+      td,
+      th {
+        color: #111;
+        border-color: #ddd
+      }
+
+      .print-only {
+        display: block
+      }
+
+      .table-wrap {
+        border-color: #ddd
+      }
+
+      .note {
+        color: #111;
+        background: #f4f6ff
+      }
+
+      .bar-track {
+        border-color: #ccc;
+        background: #eee
+      }
+
+      .bar-fill {
+        background: #777
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="hero">
+      <div>
+        <div class="eyebrow">Plan interactivo · retiro · inmueble + cartera</div>
+        <h1>Calculadora dinámica de retiro</h1>
+        <p class="subtitle">Modelo autocontenido para probar capital inicial, MEP, propiedad, alquiler, demora hasta
+          cobrar, gastos mensuales y cartera. La prioridad es ver si el plan cubre tus gastos desde el primer mes sin
+          tocar la reserva destinada a la compra.</p>
+        <div class="pillbar">
+          <span class="pill">🔒 Reserva de casa separada</span>
+          <span class="pill">💵 Gasto mensual editable desde mes 1</span>
+          <span class="pill">🏠 Compra + alquiler + cartera</span>
+          <span class="pill">📊 Tablas en ancho completo</span>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div>
+          <div class="label">Resultado rápido</div>
+          <div class="big" id="heroVerdict">—</div>
+          <p id="heroText">Modificá los supuestos y la calculadora recalcula todo.</p>
+        </div>
+        <div class="hero-grid">
+          <div class="mini-stat">
+            <div class="label">Excedente inicial</div>
+            <div class="big" id="heroSurplus">—</div>
+          </div>
+          <div class="mini-stat">
+            <div class="label">Ingreso sostenible</div>
+            <div class="big" id="heroIncome">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="quick-nav no-print" aria-label="Navegación rápida">
+    <a href="#configuracion">Parámetros</a>
+    <a href="#diagnostico">Diagnóstico</a>
+    <a href="#asignacion">Asignación</a>
+    <a href="#liquidez">Liquidez</a>
+    <a href="#proyeccion">Proyección</a>
+    <a href="#metodologia">Metodología</a>
+  </nav>
+
+  <main>
+    <section id="configuracion" class="control-panel no-print">
+      <div class="control-header">
+        <div>
+          <h2>Parámetros de simulación</h2>
+          <p>Todos los supuestos están arriba para que las tablas y diagnósticos usen el ancho completo de pantalla.
+            Cambiá cualquier valor y el resultado se actualiza automáticamente.</p>
+        </div>
+        <div class="control-actions">
+          <button id="resetBtn" class="secondary" type="button">Restablecer base</button>
+          <button id="printBtn" class="secondary" type="button">Imprimir / PDF</button>
+        </div>
+      </div>
+
+      <div class="controls-grid">
+        <div class="control-card primary">
+          <h3>🏠 Compra, alquiler y gasto</h3>
+          <p class="card-desc">Define cuánto capital hay, cuánto se reserva para la propiedad y qué ingreso/gasto
+            mensual necesita cubrir el plan.</p>
+          <div class="input-grid">
+            <div><label for="capitalARS"><span class="label-with-tip"><span>Capital inicial (ARS)</span><span
+                    class="tip" tabindex="0" role="button"
+                    aria-label="Monto total disponible al inicio, antes de reservar la propiedad, pagar costos o armar la cartera."
+                    data-tip="Monto total disponible al inicio, antes de reservar la propiedad, pagar costos o armar la cartera.">?</span></span></label><input
+                id="capitalARS" type="number" value="325000000" step="100000" /></div>
+            <div><label for="fx0"><span class="label-with-tip"><span>MEP efectivo (ARS/USD)</span><span class="tip"
+                    tabindex="0" role="button"
+                    aria-label="Tipo de cambio usado para convertir pesos a dólares. “Efectivo” incluye comisiones/costos operativos estimados."
+                    data-tip="Tipo de cambio usado para convertir pesos a dólares. “Efectivo” incluye comisiones/costos operativos estimados.">?</span></span></label><input
+                id="fx0" type="number" value="1507.26" step="0.01" /></div>
+            <div><label for="propertyUSD"><span class="label-with-tip"><span>Precio propiedad (USD)</span><span
+                    class="tip" tabindex="0" role="button"
+                    aria-label="Precio de compra del inmueble, sin incluir costos de escribanía, comisión, sellos u otros gastos de cierre."
+                    data-tip="Precio de compra del inmueble, sin incluir costos de escribanía, comisión, sellos u otros gastos de cierre.">?</span></span></label><input
+                id="propertyUSD" type="number" value="167900" step="1000" /></div>
+            <div><label for="costPct"><span class="label-with-tip"><span>Costos de compra (%)</span><span class="tip"
+                    tabindex="0" role="button"
+                    aria-label="Porcentaje adicional sobre el precio de la propiedad. Ejemplo: 7% sobre USD 180.000 equivale a USD 12.600."
+                    data-tip="Porcentaje adicional sobre el precio de la propiedad. Ejemplo: 7% sobre USD 180.000 equivale a USD 12.600.">?</span></span></label><input
+                id="costPct" type="number" value="7" step="0.1" /></div>
+            <div><label for="rentUSD"><span class="label-with-tip"><span>Alquiler bruto mensual (USD)</span><span
+                    class="tip" tabindex="0" role="button"
+                    aria-label="Monto contractual esperado antes de descontar vacancia, mantenimiento, impuestos y otros gastos asociados al inmueble."
+                    data-tip="Monto contractual esperado antes de descontar vacancia, mantenimiento, impuestos y otros gastos asociados al inmueble.">?</span></span></label><input
+                id="rentUSD" type="number" value="1000" step="50" /></div>
+            <div><label for="opexPct"><span class="label-with-tip"><span>Vacancia/mant./imp. (%)</span><span class="tip"
+                    tabindex="0" role="button"
+                    aria-label="Descuento aplicado al alquiler bruto para estimar el alquiler neto realmente disponible para vivir."
+                    data-tip="Descuento aplicado al alquiler bruto para estimar el alquiler neto realmente disponible para vivir.">?</span></span></label><input
+                id="opexPct" type="number" value="5" step="1" /></div>
+            <div><label for="livingUSD"><span class="label-with-tip"><span>Gasto requerido (USD/mes)</span><span
+                    class="tip" tabindex="0" role="button"
+                    aria-label="Monto mensual que necesitás cubrir desde el mes 1 para obra social y otros gastos."
+                    data-tip="Monto mensual que necesitás cubrir desde el mes 1 para obra social y otros gastos.">?</span></span></label><input
+                id="livingUSD" type="number" value="1000" step="50" /></div>
+            <div><label for="taxPct"><span class="label-with-tip"><span>Impuesto sobre alquiler (%)</span><span
+                    class="tip" tabindex="0" role="button"
+                    aria-label="Descuento adicional sobre el alquiler luego de vacancia/mantenimiento. Dejalo en 0 hasta validarlo con contador."
+                    data-tip="Descuento adicional sobre el alquiler luego de vacancia/mantenimiento. Dejalo en 0 hasta validarlo con contador.">?</span></span></label><input
+                id="taxPct" type="number" value="0" step="1" />
+              <div class="hint">Dejalo en 0 hasta validarlo con contador.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-card timing">
+          <h3>🗓️ Tiempos y transición</h3>
+          <p class="card-desc">Controla cuántos meses hay que vivir sin alquiler y cuánto se proyecta.</p>
+          <div class="input-grid compact">
+            <div><label for="horizonMonths"><span class="label-with-tip"><span>Horizonte (meses)</span><span class="tip"
+                    tabindex="0" role="button" aria-label="Cantidad de meses que se proyectan en la tabla mes a mes."
+                    data-tip="Cantidad de meses que se proyectan en la tabla mes a mes.">?</span></span></label><input
+                id="horizonMonths" type="number" value="60" step="12" min="1" max="360" /></div>
+            <div><label for="purchaseMonth"><span class="label-with-tip"><span>Mes de escritura/compra</span><span
+                    class="tip" tabindex="0" role="button"
+                    aria-label="Mes en el que se asume que se paga la propiedad. Antes de ese mes, la reserva de la casa permanece invertida en liquidez USD."
+                    data-tip="Mes en el que se asume que se paga la propiedad. Antes de ese mes, la reserva de la casa permanece invertida en liquidez USD.">?</span></span></label><input
+                id="purchaseMonth" type="number" value="2" step="1" min="1" max="360" />
+              <div class="hint">Antes: reserva de casa en liquidez USD.</div>
+            </div>
+            <div><label for="rentStartMonth"><span class="label-with-tip"><span>Mes de inicio de alquiler</span><span
+                    class="tip" tabindex="0" role="button"
+                    aria-label="Primer mes en el que se cobra alquiler. Si lo ponés antes de la compra, la calculadora lo corrige al mes de compra."
+                    data-tip="Primer mes en el que se cobra alquiler. Si lo ponés antes de la compra, la calculadora lo corrige al mes de compra.">?</span></span></label><input
+                id="rentStartMonth" type="number" value="3" step="1" min="1" max="360" />
+              <div class="hint">Se corrige si es menor al mes de compra.</div>
+            </div>
+            <div><label for="emergencyMonths"><span class="label-with-tip"><span>Colchón post-compra (meses)</span><span
+                    class="tip" tabindex="0" role="button"
+                    aria-label="Cantidad de meses de gasto que se intenta mantener en liquidez después de comprar la propiedad."
+                    data-tip="Cantidad de meses de gasto que se intenta mantener en liquidez después de comprar la propiedad.">?</span></span></label><input
+                id="emergencyMonths" type="number" value="3" step="1" min="0" /></div>
+          </div>
+          <label class="checkrow"><input id="autoBridge" type="checkbox" checked /> <span>Auto-ajustar caja líquida si
+              hay meses sin alquiler. <span class="tip" tabindex="0" role="button"
+                aria-label="Cuando está activado, la calculadora sube la liquidez mínima necesaria si hay meses sin alquiler o si el colchón configurado lo exige."
+                data-tip="Cuando está activado, la calculadora sube la liquidez mínima necesaria si hay meses sin alquiler o si el colchón configurado lo exige.">?</span></span></label>
+        </div>
+
+        <div class="control-card rates">
+          <h3>📈 Tasas y supuestos anuales</h3>
+          <p class="card-desc">Se usan para estimar rendimientos, inflación, MEP futuro y gasto mensual.</p>
+          <div class="input-grid">
+            <div><label for="inflationPct"><span class="label-with-tip"><span>Inflación esperada (%)</span><span
+                    class="tip" tabindex="0" role="button"
+                    aria-label="Inflación anual esperada usada para proyectar instrumentos CER y preservar poder de compra en pesos."
+                    data-tip="Inflación anual esperada usada para proyectar instrumentos CER y preservar poder de compra en pesos.">?</span></span></label><input
+                id="inflationPct" type="number" value="23.3" step="0.1" /></div>
+            <div><label for="devalPct"><span class="label-with-tip"><span>Suba MEP / devaluación (%)</span><span
+                    class="tip" tabindex="0" role="button"
+                    aria-label="Aumento anual esperado del dólar MEP. Se usa para convertir instrumentos en pesos a USD equivalentes mes a mes."
+                    data-tip="Aumento anual esperado del dólar MEP. Se usa para convertir instrumentos en pesos a USD equivalentes mes a mes.">?</span></span></label><input
+                id="devalPct" type="number" value="23.3" step="0.1" /></div>
+            <div><label for="mmARSRate"><span class="label-with-tip"><span>Money Market ARS TNA (%)</span><span
+                    class="tip" tabindex="0" role="button"
+                    aria-label="Tasa nominal anual estimada del fondo de liquidez en pesos. Se modela como rendimiento mensual simple."
+                    data-tip="Tasa nominal anual estimada del fondo de liquidez en pesos. Se modela como rendimiento mensual simple.">?</span></span></label><input
+                id="mmARSRate" type="number" value="21" step="0.1" /></div>
+            <div><label for="usdMMRate"><span class="label-with-tip"><span>Liquidez USD / caución (%)</span><span
+                    class="tip" tabindex="0" role="button"
+                    aria-label="Rendimiento anual estimado de la reserva de la casa mientras está estacionada en instrumentos muy líquidos en USD."
+                    data-tip="Rendimiento anual estimado de la reserva de la casa mientras está estacionada en instrumentos muy líquidos en USD.">?</span></span></label><input
+                id="usdMMRate" type="number" value="2.5" step="0.1" /></div>
+            <div><label for="cerShortReal"><span class="label-with-tip"><span>CER corto real (%)</span><span class="tip"
+                    tabindex="0" role="button"
+                    aria-label="Rendimiento anual esperado por encima de la inflación para el tramo CER corto."
+                    data-tip="Rendimiento anual esperado por encima de la inflación para el tramo CER corto.">?</span></span></label><input
+                id="cerShortReal" type="number" value="1.5" step="0.1" /></div>
+            <div><label for="cerMedReal"><span class="label-with-tip"><span>CER medio real (%)</span><span class="tip"
+                    tabindex="0" role="button"
+                    aria-label="Rendimiento anual esperado por encima de la inflación para el tramo CER medio, con mayor volatilidad que CER corto."
+                    data-tip="Rendimiento anual esperado por encima de la inflación para el tramo CER medio, con mayor volatilidad que CER corto.">?</span></span></label><input
+                id="cerMedReal" type="number" value="7" step="0.1" /></div>
+            <div><label for="onUSDRate"><span class="label-with-tip"><span>ON hard-dollar USD (%)</span><span
+                    class="tip" tabindex="0" role="button"
+                    aria-label="Rendimiento anual esperado en dólares de obligaciones negociables hard-dollar."
+                    data-tip="Rendimiento anual esperado en dólares de obligaciones negociables hard-dollar.">?</span></span></label><input
+                id="onUSDRate" type="number" value="7" step="0.1" /></div>
+            <div><label for="expenseGrowthPct"><span class="label-with-tip"><span>Crecimiento gasto USD (%)</span><span
+                    class="tip" tabindex="0" role="button"
+                    aria-label="Aumento anual esperado de tu gasto mensual medido en USD. Con 0%, el gasto queda fijo en USD."
+                    data-tip="Aumento anual esperado de tu gasto mensual medido en USD. Con 0%, el gasto queda fijo en USD.">?</span></span></label><input
+                id="expenseGrowthPct" type="number" value="0" step="0.1" /></div>
+          </div>
+        </div>
+
+        <div class="control-card portfolio">
+          <h3>💼 Cartera del excedente</h3>
+          <p class="card-desc">Distribuye el excedente después de separar propiedad + costos. Si el auto-ajuste está
+            activo, la liquidez puede subir.</p>
+          <div class="input-grid compact">
+            <div><label for="liqPct"><span class="label-with-tip"><span>Liquidez MM (%)</span><span class="tip"
+                    tabindex="0" role="button"
+                    aria-label="Porcentaje del excedente asignado a caja líquida en pesos. Sirve para transición, emergencias y gastos de corto plazo."
+                    data-tip="Porcentaje del excedente asignado a caja líquida en pesos. Sirve para transición, emergencias y gastos de corto plazo.">?</span></span></label><input
+                id="liqPct" type="number" value="15" step="1" /></div>
+            <div><label for="cerShortPct"><span class="label-with-tip"><span>CER corto (%)</span><span class="tip"
+                    tabindex="0" role="button" aria-label="Porcentaje del excedente asignado a bonos/fondos CER cortos."
+                    data-tip="Porcentaje del excedente asignado a bonos/fondos CER cortos.">?</span></span></label><input
+                id="cerShortPct" type="number" value="30" step="1" /></div>
+            <div><label for="cerMedPct"><span class="label-with-tip"><span>CER medio (%)</span><span class="tip"
+                    tabindex="0" role="button" aria-label="Porcentaje del excedente asignado a bonos/fondos CER medios."
+                    data-tip="Porcentaje del excedente asignado a bonos/fondos CER medios.">?</span></span></label><input
+                id="cerMedPct" type="number" value="30" step="1" /></div>
+            <div><label for="onPct"><span class="label-with-tip"><span>ON USD (%)</span><span class="tip" tabindex="0"
+                    role="button" aria-label="Porcentaje del excedente asignado a instrumentos hard-dollar en USD."
+                    data-tip="Porcentaje del excedente asignado a instrumentos hard-dollar en USD.">?</span></span></label><input
+                id="onPct" type="number" value="25" step="1" /></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="results">
+      <div id="statusBox" class="status">
+        <div class="icon">⏳</div>
+        <div><strong>Calculando…</strong><span class="muted">Cargando supuestos.</span></div>
+      </div>
+
+      <div class="kpi-grid" id="diagnostico">
+        <div class="kpi" id="kpiSurplusBox">
+          <div class="title"><span class="label-with-tip"><span>Excedente inicial</span><span class="tip" tabindex="0"
+                role="button" aria-label="Dinero que queda después de reservar propiedad + costos de compra."
+                data-tip="Dinero que queda después de reservar propiedad + costos de compra.">?</span></span></div>
+          <div class="value" id="kpiSurplus">—</div>
+          <div class="sub" id="kpiSurplusSub">—</div>
+        </div>
+        <div class="kpi" id="kpiBridgeBox">
+          <div class="title"><span class="label-with-tip"><span>Caja de transición</span><span class="tip" tabindex="0"
+                role="button"
+                aria-label="Indica si se cubren gastos desde el mes 1 hasta que entre el alquiler, manteniendo el colchón configurado."
+                data-tip="Indica si se cubren gastos desde el mes 1 hasta que entre el alquiler, manteniendo el colchón configurado.">?</span></span>
+          </div>
+          <div class="value" id="kpiBridge">—</div>
+          <div class="sub" id="kpiBridgeSub">—</div>
+        </div>
+        <div class="kpi" id="kpiIncomeBox">
+          <div class="title"><span class="label-with-tip"><span>Ingreso sostenible</span><span class="tip" tabindex="0"
+                role="button"
+                aria-label="Alquiler neto + rendimiento sostenible estimado de la cartera después de la compra."
+                data-tip="Alquiler neto + rendimiento sostenible estimado de la cartera después de la compra.">?</span></span>
+          </div>
+          <div class="value" id="kpiIncome">—</div>
+          <div class="sub" id="kpiIncomeSub">—</div>
+        </div>
+        <div class="kpi" id="kpiMaxPropBox">
+          <div class="title"><span class="label-with-tip"><span>Precio máximo por caja</span><span class="tip"
+                tabindex="0" role="button"
+                aria-label="Precio máximo estimado para comprar, pagar costos, cubrir la transición y mantener colchón. No mide autosuficiencia mensual."
+                data-tip="Precio máximo estimado para comprar, pagar costos, cubrir la transición y mantener colchón. No mide autosuficiencia mensual.">?</span></span>
+          </div>
+          <div class="value" id="kpiMaxProp">—</div>
+          <div class="sub" id="kpiMaxPropSub">—</div>
+        </div>
+      </div>
+
+      <section class="card">
+        <div class="section-title">
+          <h2><span class="label-with-tip"><span>Resumen ejecutivo automático</span><span class="tip" tabindex="0"
+                role="button"
+                aria-label="Texto generado con los supuestos actuales. Resume si alcanza la caja, cuánto ingreso mensual queda y dónde están las alertas principales."
+                data-tip="Texto generado con los supuestos actuales. Resume si alcanza la caja, cuánto ingreso mensual queda y dónde están las alertas principales.">?</span></span>
+          </h2><small>lectura rápida</small>
+        </div>
+        <div id="executiveSummary" class="note">—</div>
+      </section>
+
+      <div class="split">
+        <section class="card">
+          <div class="section-title">
+            <h2><span class="label-with-tip"><span>Reparto del dinero</span><span class="tip" tabindex="0" role="button"
+                  aria-label="Muestra cómo se divide el capital inicial entre propiedad, costos y cartera líquida/invertida."
+                  data-tip="Muestra cómo se divide el capital inicial entre propiedad, costos y cartera líquida/invertida.">?</span></span>
+            </h2><small>capital inicial</small>
+          </div>
+          <div class="bar-table" id="allocationBars"></div>
+        </section>
+        <section class="card">
+          <div class="section-title">
+            <h2><span class="label-with-tip"><span>Renta del inmueble</span><span class="tip" tabindex="0" role="button"
+                  aria-label="Calcula cap rate bruto y neto. El neto descuenta vacancia, mantenimiento, impuestos y costos de compra."
+                  data-tip="Calcula cap rate bruto y neto. El neto descuenta vacancia, mantenimiento, impuestos y costos de compra.">?</span></span>
+            </h2><small>cap rates</small>
+          </div>
+          <div class="bar-table" id="capBars"></div>
+          <div id="rentNote" class="note" style="margin-top:14px">—</div>
+        </section>
+      </div>
+
+      <section class="card" id="asignacion">
+        <div class="section-title">
+          <h2><span class="label-with-tip"><span>Tabla maestra de asignación</span><span class="tip" tabindex="0"
+                role="button"
+                aria-label="Detalle de cada bloque del plan: monto en ARS, equivalente en USD, porcentaje del capital, rendimiento esperado y rol."
+                data-tip="Detalle de cada bloque del plan: monto en ARS, equivalente en USD, porcentaje del capital, rendimiento esperado y rol.">?</span></span>
+          </h2><small>se recalcula con tus inputs</small>
+        </div>
+        <div class="table-wrap">
+          <table id="allocationTable"></table>
+        </div>
+      </section>
+
+      <section class="card" id="liquidez">
+        <div class="section-title">
+          <h2><span class="label-with-tip"><span>Plan de liquidez desde el mes 1</span><span class="tip" tabindex="0"
+                role="button"
+                aria-label="Chequea cómo se cubren los gastos mensuales antes y después de cobrar alquiler."
+                data-tip="Chequea cómo se cubren los gastos mensuales antes y después de cobrar alquiler.">?</span></span>
+          </h2><small>sin tocar la reserva de la casa</small>
+        </div>
+        <div class="split">
+          <div>
+            <h3>Antes de cobrar alquiler</h3>
+            <div id="phase0Note" class="note">—</div>
+          </div>
+          <div>
+            <h3>Después de cobrar alquiler</h3>
+            <div id="phase12Note" class="note">—</div>
+          </div>
+        </div>
+        <div id="month1Note" class="note" style="margin-top:14px">—</div>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <h2><span class="label-with-tip"><span>Diagnóstico: alquiler, precio y caja</span><span class="tip"
+                tabindex="0" role="button"
+                aria-label="Sección inversa: calcula qué alquiler o qué precio necesitarías según dos objetivos diferentes: autosuficiencia mensual y caja de transición."
+                data-tip="Sección inversa: calcula qué alquiler o qué precio necesitarías según dos objetivos diferentes: autosuficiencia mensual y caja de transición.">?</span></span>
+          </h2><small>qué significa cada número</small>
+        </div>
+        <div class="note" style="margin-bottom:12px">Esta sección responde dos preguntas distintas:
+          <strong>autosuficiencia mensual</strong> —si el alquiler neto + el rendimiento de la cartera alcanzan para tus
+          gastos— y <strong>caja de transición</strong> —si hay suficiente liquidez para vivir hasta que empiece el
+          alquiler.
+        </div>
+        <div class="scenario-grid" id="inverseGrid"></div>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <h2><span class="label-with-tip"><span>Escenarios rápidos</span><span class="tip" tabindex="0" role="button"
+                aria-label="Pruebas de sensibilidad: comparan el escenario actual contra cambios puntuales, como menor alquiler o demora hasta cobrar."
+                data-tip="Pruebas de sensibilidad: comparan el escenario actual contra cambios puntuales, como menor alquiler o demora hasta cobrar.">?</span></span>
+          </h2><small>comparación de sensibilidad</small>
+        </div>
+        <div class="note" style="margin-bottom:12px">No son recomendaciones. Son pruebas automáticas para ver qué tan
+          sensible es el plan si cambia una variable clave: el alquiler real o la demora hasta empezar a cobrar.</div>
+        <div class="scenario-grid" id="scenarioGrid"></div>
+      </section>
+
+      <section class="card" id="proyeccion">
+        <div class="section-title">
+          <h2><span class="label-with-tip"><span>Proyección mes a mes</span><span class="tip" tabindex="0" role="button"
+                aria-label="Flujo mensual estimado. Distingue ingresos, retiros desde caja/cartera y consumo neto de capital."
+                data-tip="Flujo mensual estimado. Distingue ingresos, retiros desde caja/cartera y consumo neto de capital.">?</span></span>
+          </h2>
+          <div class="btnrow" style="margin:0"><button id="csvBtn" type="button" class="secondary">Descargar
+              CSV</button><button id="copyBtn" type="button" class="secondary">Copiar resumen</button></div>
+        </div>
+        <div class="note warn" style="margin-bottom:12px">La proyección trabaja en USD equivalentes para medir poder de
+          compra y en ARS nominales para los instrumentos en pesos. <strong>Rinde inversiones del mes</strong> es el
+          rendimiento generado en ese mes por los saldos activos; <strong>Retiro desde caja/cartera</strong> es lo que
+          se toma de la caja o cartera para pagar gastos; <strong>Consumo neto de capital</strong> es el retiro menos el
+          rendimiento del mes. Por eso puede no coincidir con el <strong>rendimiento sostenible estimado</strong>, que
+          es un promedio anualizado usado en el diagnóstico. Los CER se modelan como inflación esperada + tasa real; eso
+          es rendimiento devengado, no cupón mensual garantizado.</div>
+        <div class="table-wrap">
+          <table id="projectionTable"></table>
+        </div>
+      </section>
+
+      <section class="card" id="metodologia">
+        <details open>
+          <summary>Metodología y advertencias</summary>
+          <div style="margin-top:12px">
+            <p><strong>Base del plan.</strong> La arquitectura replica el dictamen: dolarizar de inmediato la reserva
+              del inmueble, comprar la propiedad, y administrar el excedente en una cartera conservadora compuesta por
+              liquidez, CER corto, CER medio y ON hard-dollar.</p>
+            <p><strong>Ajuste menor incorporado.</strong> La calculadora prioriza cubrir el gasto mensual desde el mes
+              1. Si el alquiler se demora, aumenta automáticamente la caja líquida —cuando está activado— para cubrir la
+              transición hasta cobrar alquiler y un colchón mínimo, reduciendo proporcionalmente CER/ON.</p>
+            <p><strong>Caja de transición.</strong> Es el dinero reservado para vivir en los meses en los que todavía no
+              cobrás alquiler. No es un rendimiento: puede incluir intereses de liquidez, pero también consumo
+              controlado del excedente líquido.</p>
+            <div class="help-box">
+              <div class="help-row"><strong>Rinde inversiones del mes</strong><span>Rendimiento efectivo modelado para
+                  ese mes según los saldos existentes. Cambia mes a mes y, antes de la compra, puede incluir rendimiento
+                  de la reserva de casa.</span></div>
+              <div class="help-row"><strong>Rinde sostenible estimado</strong><span>Promedio mensual anualizado de la
+                  cartera después de la compra. Sirve para diagnosticar autosuficiencia, pero no pretende coincidir con
+                  cada mes de la proyección.</span></div>
+              <div class="help-row"><strong>Retiro desde caja/cartera</strong><span>Dinero tomado de saldos disponibles
+                  para pagar el gasto mensual que no cubre el alquiler.</span></div>
+              <div class="help-row"><strong>Consumo neto de capital</strong><span>Parte del retiro que realmente reduce
+                  capital luego de reconocer el rendimiento del mes.</span></div>
+              <div class="help-row"><strong>Caja de transición</strong><span>Liquidez necesaria para vivir desde el mes
+                  1 hasta empezar a cobrar alquiler, más el colchón mínimo que configures.</span></div>
+            </div>
+            <p><strong>Riesgo dominante.</strong> Si el inmueble representa más del 80% del patrimonio, la concentración
+              e iliquidez son el riesgo central. El archivo lo marca automáticamente cuando ocurre.</p>
+            <p><strong>No es asesoramiento regulado.</strong> Usar como herramienta educativa y de planificación.
+              Validar instrumentos, impuestos, costos, contrato de alquiler y escritura con ALyC, contador y escribano
+              antes de ejecutar.</p>
+          </div>
+        </details>
+        <div class="footer">Archivo autocontenido: no usa internet, librerías externas ni datos en tiempo real. Última
+          generación: <span id="generatedAt"></span>.</div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const defaults = {
+        capitalARS: 325000000, fx0: 1507.26, propertyUSD: 167900, costPct: 7, rentUSD: 1000, opexPct: 5, livingUSD: 1000,
+        horizonMonths: 60, purchaseMonth: 2, rentStartMonth: 3, inflationPct: 23.3, devalPct: 23.3, mmARSRate: 21, usdMMRate: 2.5,
+        cerShortReal: 1.5, cerMedReal: 7, onUSDRate: 7, expenseGrowthPct: 0, liqPct: 15, cerShortPct: 30, cerMedPct: 30, onPct: 25,
+        emergencyMonths: 3, taxPct: 0, autoBridge: true
+      };
+      const ids = Object.keys(defaults);
+      const $ = (id) => document.getElementById(id);
+      let lastProjection = [];
+      let lastSummaryText = "";
+
+      function num(id) {
+        const v = parseFloat($(id).value);
+        return Number.isFinite(v) ? v : 0;
+      }
+      function readInputs() {
+        const o = {};
+        ids.forEach(id => {
+          if (id === 'autoBridge') o[id] = $('autoBridge').checked;
+          else o[id] = num(id);
+        });
+        o.horizonMonths = Math.max(1, Math.min(360, Math.round(o.horizonMonths || 1)));
+        o.purchaseMonth = Math.max(1, Math.round(o.purchaseMonth || 1));
+        o.rentStartMonth = Math.max(1, Math.round(o.rentStartMonth || 1));
+        o.effectiveRentStart = Math.max(o.purchaseMonth, o.rentStartMonth);
+        o.costPct = Math.max(0, o.costPct);
+        o.opexPct = Math.max(0, Math.min(100, o.opexPct));
+        o.taxPct = Math.max(0, Math.min(100, o.taxPct));
+        return o;
+      }
+      function fmtUSD(v, d = 0) {
+        if (!Number.isFinite(v)) return '—';
+        const sign = v < 0 ? '-' : '';
+        const n = Math.abs(v);
+        return sign + 'USD ' + n.toLocaleString('en-US', { maximumFractionDigits: d, minimumFractionDigits: d });
+      }
+      function fmtARS(v, compact = false) {
+        if (!Number.isFinite(v)) return '—';
+        const sign = v < 0 ? '-' : '';
+        const n = Math.abs(v);
+        if (compact) {
+          if (n >= 1e9) return sign + 'ARS ' + (n / 1e9).toLocaleString('es-AR', { maximumFractionDigits: 2 }) + 'B';
+          if (n >= 1e6) return sign + 'ARS ' + (n / 1e6).toLocaleString('es-AR', { maximumFractionDigits: 1 }) + 'M';
+        }
+        return sign + 'ARS ' + Math.round(n).toLocaleString('es-AR');
+      }
+      function fmtPct(v, d = 1) { return Number.isFinite(v) ? v.toLocaleString('es-AR', { maximumFractionDigits: d, minimumFractionDigits: d }) + '%' : '—'; }
+      function monthlyEff(annualPct) { return Math.pow(1 + annualPct / 100, 1 / 12) - 1; }
+      function monthlySimple(annualPct) { return (annualPct / 100) / 12; }
+      function classFor(v, goodThreshold = 0, warnThreshold = -0.0001) { return v >= goodThreshold ? 'good' : (v >= warnThreshold ? 'warn' : 'bad'); }
+      function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+      function escHTML(str) {
+        return String(str).replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
+      }
+      function tip(text) {
+        const t = escHTML(text);
+        return `<span class="tip" tabindex="0" role="button" aria-label="${t}" data-tip="${t}">?</span>`;
+      }
+      function labelTip(label, text) {
+        return `<span class="label-with-tip"><span>${escHTML(label)}</span>${tip(text)}</span>`;
+      }
+      function thTip(label, text) {
+        return `<th>${labelTip(label, text)}</th>`;
+      }
+
+      function normalizeShares(o, deploymentUSD, fxAtDeployment) {
+        let base = {
+          liq: Math.max(0, o.liqPct),
+          cerS: Math.max(0, o.cerShortPct),
+          cerM: Math.max(0, o.cerMedPct),
+          on: Math.max(0, o.onPct)
+        };
+        const total = base.liq + base.cerS + base.cerM + base.on;
+        if (total <= 0) { base = { liq: 100, cerS: 0, cerM: 0, on: 0 }; }
+        else { Object.keys(base).forEach(k => base[k] = base[k] / total * 100); }
+
+        const monthsNoRentAfterPurchase = Math.max(0, o.effectiveRentStart - o.purchaseMonth);
+        const minLiquidityUSD = o.livingUSD * (monthsNoRentAfterPurchase + Math.max(0, o.emergencyMonths));
+        let requiredLiqPct = deploymentUSD > 0 ? (minLiquidityUSD / deploymentUSD) * 100 : 100;
+        requiredLiqPct = clamp(requiredLiqPct, 0, 100);
+        let adjusted = { ...base };
+        if (o.autoBridge && requiredLiqPct > adjusted.liq) {
+          const remaining = Math.max(0, 100 - requiredLiqPct);
+          const otherTotal = adjusted.cerS + adjusted.cerM + adjusted.on;
+          adjusted.liq = requiredLiqPct;
+          if (otherTotal > 0) {
+            adjusted.cerS = adjusted.cerS / otherTotal * remaining;
+            adjusted.cerM = adjusted.cerM / otherTotal * remaining;
+            adjusted.on = adjusted.on / otherTotal * remaining;
+          } else {
+            adjusted.cerS = adjusted.cerM = adjusted.on = 0;
+          }
+        }
+        return { base, adjusted, minLiquidityUSD, requiredLiqPct };
+      }
+
+      function withdrawFromPortfolio(state, amountUSD, fx) {
+        let remaining = Math.max(0, amountUSD);
+        let draw = { liqARS: 0, cerShortARS: 0, cerMedARS: 0, onUSD: 0, unmetUSD: 0 };
+        const takeARS = (key) => {
+          if (remaining <= 0) return;
+          const needARS = remaining * fx;
+          const taken = Math.min(state[key], needARS);
+          state[key] -= taken;
+          draw[key] += taken;
+          remaining -= taken / fx;
+        };
+        takeARS('liqARS');
+        takeARS('cerShortARS');
+        takeARS('cerMedARS');
+        if (remaining > 0) {
+          const taken = Math.min(state.onUSD, remaining);
+          state.onUSD -= taken;
+          draw.onUSD += taken;
+          remaining -= taken;
+        }
+        if (remaining > 0.000001) { draw.unmetUSD = remaining; }
+        return draw;
+      }
+
+      function calculate(o) {
+        const capitalUSD = o.capitalARS / o.fx0;
+        const propertyARS = o.propertyUSD * o.fx0;
+        const costsUSD = o.propertyUSD * o.costPct / 100;
+        const costsARS = costsUSD * o.fx0;
+        const houseReserveUSD = o.propertyUSD + costsUSD;
+        const houseReserveARS = houseReserveUSD * o.fx0;
+        const initialSurplusARS = o.capitalARS - houseReserveARS;
+        const initialSurplusUSD = initialSurplusARS / o.fx0;
+
+        const rMM = monthlySimple(o.mmARSRate);
+        const rUSDMM = monthlyEff(o.usdMMRate);
+        const rDeval = monthlyEff(o.devalPct);
+        const rInfl = monthlyEff(o.inflationPct);
+        const rCERShort = (1 + rInfl) * (1 + monthlyEff(o.cerShortReal)) - 1;
+        const rCERMed = (1 + rInfl) * (1 + monthlyEff(o.cerMedReal)) - 1;
+        const rON = monthlyEff(o.onUSDRate);
+        const rExpense = monthlyEff(o.expenseGrowthPct);
+        const netRentUSD = o.rentUSD * (1 - o.opexPct / 100) * (1 - o.taxPct / 100);
+
+        const fxAtDeployment = o.fx0 * Math.pow(1 + rDeval, Math.max(0, o.purchaseMonth - 1));
+        const shareInfo = normalizeShares(o, Math.max(0, initialSurplusARS) / fxAtDeployment, fxAtDeployment);
+
+        let state = {
+          prePurchaseCashARS: Math.max(0, initialSurplusARS),
+          houseReserveUSD: houseReserveUSD,
+          propertyOwned: false,
+          liqARS: 0,
+          cerShortARS: 0,
+          cerMedARS: 0,
+          onUSD: 0,
+          failed: false
+        };
+
+        const rows = [];
+        let deployed = false;
+        let bridgeDrawUSD = 0;
+        let bridgeIncomeUSD = 0;
+        let bridgeExpenseUSD = 0;
+        let firstFailureMonth = null;
+        let minPortfolioUSD = Infinity;
+
+        for (let m = 1; m <= o.horizonMonths; m++) {
+          const fx = o.fx0 * Math.pow(1 + rDeval, m - 1);
+          const expenseUSD = o.livingUSD * Math.pow(1 + rExpense, m - 1);
+          let rentUSD = (m >= o.effectiveRentStart && state.propertyOwned) ? netRentUSD : 0;
+          let houseInterestUSD = 0, mmIncomeARS = 0, cerShortIncomeARS = 0, cerMedIncomeARS = 0, onIncomeUSD = 0;
+          let drawUSD = 0, unmetUSD = 0, cashFlowUSD = 0, note = '';
+
+          if (m < o.purchaseMonth) {
+            houseInterestUSD = state.houseReserveUSD * rUSDMM;
+            mmIncomeARS = state.prePurchaseCashARS * rMM;
+            bridgeIncomeUSD += houseInterestUSD + (mmIncomeARS / fx);
+            bridgeExpenseUSD += expenseUSD;
+            state.prePurchaseCashARS += mmIncomeARS + houseInterestUSD * fx;
+            const expenseARS = expenseUSD * fx;
+            const drawARS = Math.min(state.prePurchaseCashARS, expenseARS);
+            state.prePurchaseCashARS -= drawARS;
+            drawUSD = drawARS / fx;
+            if (drawARS + 0.01 < expenseARS) {
+              unmetUSD = (expenseARS - drawARS) / fx;
+              state.failed = true;
+              if (firstFailureMonth === null) firstFailureMonth = m;
+            }
+            bridgeDrawUSD += Math.max(0, expenseUSD - (houseInterestUSD + mmIncomeARS / fx));
+            cashFlowUSD = houseInterestUSD + mmIncomeARS / fx - expenseUSD;
+            note = 'Fase 0: reserva casa en USD líquido; excedente en MM pesos.';
+          } else {
+            if (!deployed) {
+              state.propertyOwned = true;
+              const deployARS = Math.max(0, state.prePurchaseCashARS);
+              state.liqARS = deployARS * shareInfo.adjusted.liq / 100;
+              state.cerShortARS = deployARS * shareInfo.adjusted.cerS / 100;
+              state.cerMedARS = deployARS * shareInfo.adjusted.cerM / 100;
+              state.onUSD = (deployARS * shareInfo.adjusted.on / 100) / fx;
+              state.prePurchaseCashARS = 0;
+              deployed = true;
+              note = 'Escritura/compra: se despliega cartera Fase 2.';
+            }
+            mmIncomeARS = state.liqARS * rMM;
+            cerShortIncomeARS = state.cerShortARS * rCERShort;
+            cerMedIncomeARS = state.cerMedARS * rCERMed;
+            onIncomeUSD = state.onUSD * rON;
+            state.liqARS += mmIncomeARS;
+            state.cerShortARS += cerShortIncomeARS;
+            state.cerMedARS += cerMedIncomeARS;
+            state.onUSD += onIncomeUSD;
+
+            let shortfallUSD = Math.max(0, expenseUSD - rentUSD);
+            let rentSurplusUSD = Math.max(0, rentUSD - expenseUSD);
+            if (shortfallUSD > 0) {
+              const draw = withdrawFromPortfolio(state, shortfallUSD, fx);
+              drawUSD = (draw.liqARS + draw.cerShortARS + draw.cerMedARS) / fx + draw.onUSD;
+              unmetUSD = draw.unmetUSD;
+              if (unmetUSD > 0) {
+                state.failed = true;
+                if (firstFailureMonth === null) firstFailureMonth = m;
+              }
+            } else if (rentSurplusUSD > 0) {
+              state.liqARS += rentSurplusUSD * fx;
+            }
+            cashFlowUSD = rentUSD + (mmIncomeARS + cerShortIncomeARS + cerMedIncomeARS) / fx + onIncomeUSD - expenseUSD;
+            if (!note) note = (rentUSD > 0 ? 'Alquiler activo + cartera.' : 'Propiedad comprada; alquiler aún no activo.');
+          }
+
+          const portfolioUSD = (state.prePurchaseCashARS + state.liqARS + state.cerShortARS + state.cerMedARS) / fx + state.onUSD;
+          const propertyValueUSD = state.propertyOwned ? o.propertyUSD : 0;
+          const houseReserveVisibleUSD = !state.propertyOwned ? state.houseReserveUSD : 0;
+          const netWorthUSD = portfolioUSD + propertyValueUSD + houseReserveVisibleUSD;
+          minPortfolioUSD = Math.min(minPortfolioUSD, portfolioUSD);
+          const invIncomeUSD = houseInterestUSD + (mmIncomeARS + cerShortIncomeARS + cerMedIncomeARS) / fx + onIncomeUSD;
+          rows.push({
+            mes: m, fx, expenseUSD, rentUSD, invIncomeUSD, cashFlowUSD, drawUSD, unmetUSD,
+            houseInterestUSD,
+            mmIncomeUSD: mmIncomeARS / fx,
+            cerShortIncomeUSD: cerShortIncomeARS / fx,
+            cerMedIncomeUSD: cerMedIncomeARS / fx,
+            onIncomeUSD,
+            netPrincipalUseUSD: Math.max(0, drawUSD - invIncomeUSD),
+            prePurchaseCashARS: state.prePurchaseCashARS, liqARS: state.liqARS, cerShortARS: state.cerShortARS, cerMedARS: state.cerMedARS, onUSD: state.onUSD,
+            portfolioUSD, propertyValueUSD, houseReserveVisibleUSD, netWorthUSD, note
+          });
+        }
+
+        // Forward-looking sustainable income just after rent starts / after purchase.
+        const startFx = o.fx0 * Math.pow(1 + rDeval, Math.max(0, o.effectiveRentStart - 1));
+        const deploymentUSDApprox = Math.max(0, initialSurplusARS) / startFx;
+        const weightedReturnUSDAnnual = (
+          shareInfo.adjusted.liq / 100 * ((1 + o.mmARSRate / 100) / (1 + o.devalPct / 100) - 1) +
+          shareInfo.adjusted.cerS / 100 * ((1 + o.inflationPct / 100) * (1 + o.cerShortReal / 100) / (1 + o.devalPct / 100) - 1) +
+          shareInfo.adjusted.cerM / 100 * ((1 + o.inflationPct / 100) * (1 + o.cerMedReal / 100) / (1 + o.devalPct / 100) - 1) +
+          shareInfo.adjusted.on / 100 * (o.onUSDRate / 100)
+        );
+        const sustainablePortfolioIncomeUSDMonth = Math.max(0, deploymentUSDApprox * weightedReturnUSDAnnual / 12);
+        const totalSustainableIncomeUSD = netRentUSD + sustainablePortfolioIncomeUSDMonth;
+        const monthlyGapUSD = totalSustainableIncomeUSD - o.livingUSD;
+        const netRentFactor = Math.max(0.000001, (1 - o.opexPct / 100) * (1 - o.taxPct / 100));
+        const grossRentNeededUSD = Math.max(0, (o.livingUSD - sustainablePortfolioIncomeUSDMonth) / netRentFactor);
+        const fxGrowthToIncomeStart = startFx / o.fx0;
+        const surplusNeededForIncomeUSDAtStart = (o.livingUSD > netRentUSD && weightedReturnUSDAnnual > 0)
+          ? (o.livingUSD - netRentUSD) * 12 / weightedReturnUSDAnnual
+          : 0;
+        const bridgeMonthsBeforeRent = Math.max(0, o.effectiveRentStart - 1);
+        const conservativeBridgeNeedUSD = o.livingUSD * bridgeMonthsBeforeRent;
+        const minimumLiquidUSD = conservativeBridgeNeedUSD + Math.max(0, o.emergencyMonths) * o.livingUSD;
+        const maxPropertyUSD = Math.max(0, (capitalUSD - minimumLiquidUSD) / (1 + o.costPct / 100));
+        const maxPropertyForIncomeUSD = netRentUSD >= o.livingUSD
+          ? maxPropertyUSD
+          : (weightedReturnUSDAnnual > 0
+            ? Math.max(0, (capitalUSD - surplusNeededForIncomeUSDAtStart * fxGrowthToIncomeStart) / (1 + o.costPct / 100))
+            : 0);
+        const propertySharePct = capitalUSD > 0 ? o.propertyUSD / capitalUSD * 100 : 0;
+        const houseReserveSharePct = o.capitalARS > 0 ? houseReserveARS / o.capitalARS * 100 : 0;
+        const netCapTotal = houseReserveUSD > 0 ? netRentUSD * 12 / houseReserveUSD * 100 : 0;
+        const grossCapPrice = o.propertyUSD > 0 ? o.rentUSD * 12 / o.propertyUSD * 100 : 0;
+        const grossCapTotal = houseReserveUSD > 0 ? o.rentUSD * 12 / houseReserveUSD * 100 : 0;
+        const preRentRows = rows.filter(row => row.mes < o.effectiveRentStart);
+        const preRentIncomeUSD = preRentRows.reduce((sum, row) => sum + row.invIncomeUSD, 0);
+        const preRentExpenseUSD = preRentRows.reduce((sum, row) => sum + row.expenseUSD, 0);
+        const preRentNetPrincipalUseUSD = preRentRows.reduce((sum, row) => sum + row.netPrincipalUseUSD, 0);
+        const preRentUnmetUSD = preRentRows.reduce((sum, row) => sum + row.unmetUSD, 0);
+        const month1 = rows[0] || null;
+
+        return {
+          o, capitalUSD, propertyARS, costsUSD, costsARS, houseReserveUSD, houseReserveARS, initialSurplusARS, initialSurplusUSD,
+          netRentUSD, shareInfo, rows, bridgeDrawUSD, bridgeIncomeUSD, bridgeExpenseUSD, firstFailureMonth, minPortfolioUSD,
+          weightedReturnUSDAnnual, sustainablePortfolioIncomeUSDMonth, totalSustainableIncomeUSD, monthlyGapUSD, grossRentNeededUSD,
+          bridgeMonthsBeforeRent, conservativeBridgeNeedUSD, minimumLiquidUSD, maxPropertyUSD, maxPropertyForIncomeUSD,
+          surplusNeededForIncomeUSDAtStart, propertySharePct, houseReserveSharePct, netCapTotal, grossCapPrice, grossCapTotal,
+          preRentRows, preRentIncomeUSD, preRentExpenseUSD, preRentNetPrincipalUseUSD, preRentUnmetUSD, month1
+        };
+      }
+
+      function renderAllocationBars(res) {
+        const items = [
+          ['Inmueble', res.propertyARS, 'Activo real ilíquido'],
+          ['Costos compra', res.costsARS, 'Costo de transacción'],
+          ['Liquidez MM', Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.liq / 100, 'Caja transición + colchón'],
+          ['CER corto', Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.cerS / 100, 'Inflación baja volatilidad'],
+          ['CER medio', Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.cerM / 100, 'Motor real'],
+          ['ON USD', Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.on / 100, 'Renta hard-dollar']
+        ];
+        const total = Math.max(1, res.o.capitalARS);
+        $('allocationBars').innerHTML = items.map(([name, val, sub]) => {
+          const pct = val / total * 100;
+          return `<div class="bar-row"><div><strong>${name}</strong><br><span class="muted">${sub}</span></div><div class="bar-track"><div class="bar-fill" style="width:${clamp(pct, 0, 100)}%"></div></div><div>${fmtPct(pct, 1)}</div></div>`;
+        }).join('') + (res.initialSurplusARS < 0 ? `<div class="note bad">Falta capital para comprar esta propiedad con estos costos: ${fmtARS(-res.initialSurplusARS)} (${fmtUSD(-res.initialSurplusUSD, 0)}).</div>` : '');
+      }
+
+      function renderCapBars(res) {
+        const maxCap = Math.max(10, res.grossCapPrice, res.grossCapTotal, res.netCapTotal, res.o.onUSDRate);
+        const items = [
+          ['Cap bruto sobre precio', res.grossCapPrice, 'Alquiler bruto anual / precio'],
+          ['Cap bruto sobre inversión total', res.grossCapTotal, 'Incluye costos de compra'],
+          ['Cap neto sobre inversión total', res.netCapTotal, 'Descuenta opex e impuestos'],
+          ['Comparación ON USD', res.o.onUSDRate, 'Rendimiento anual supuesto']
+        ];
+        $('capBars').innerHTML = items.map(([name, val, sub]) => `<div class="bar-row"><div><strong>${name}</strong><br><span class="muted">${sub}</span></div><div class="bar-track"><div class="bar-fill" style="width:${clamp(val / maxCap * 100, 0, 100)}%"></div></div><div>${fmtPct(val, 2)}</div></div>`).join('');
+        const cls = res.netRentUSD >= res.o.livingUSD ? 'note' : (res.totalSustainableIncomeUSD >= res.o.livingUSD ? 'note warn' : 'note bad');
+        $('rentNote').className = cls;
+        $('rentNote').innerHTML = `Ingresaste un alquiler bruto de <strong>${fmtUSD(res.o.rentUSD, 0)}/mes</strong>. ` +
+          `Para el flujo se usa el neto: <strong>${fmtUSD(res.netRentUSD, 0)}/mes</strong>, luego de descontar ${fmtPct(res.o.opexPct + res.o.taxPct - (res.o.opexPct * res.o.taxPct / 100), 1)} por vacancia/mantenimiento/impuestos. ` +
+          `Con la cartera, el ingreso mensual sostenible estimado es <strong>${fmtUSD(res.totalSustainableIncomeUSD, 0)}</strong>. ` +
+          (res.monthlyGapUSD >= 0 ? `Supera el gasto requerido por <strong>${fmtUSD(res.monthlyGapUSD, 0)}/mes</strong>.` : `Queda un faltante estimado de <strong>${fmtUSD(-res.monthlyGapUSD, 0)}/mes</strong>; se cubre con principal salvo que suba el alquiler bruto, baje el gasto o baje el precio de compra lo suficiente como para liberar más cartera.`);
+      }
+
+      function renderAllocationTable(res) {
+        const cap = res.o.capitalARS;
+        const rows = [
+          ['Inmueble', res.propertyARS, res.o.propertyUSD, res.propertyARS / cap * 100, 'Medio-bajo / ilíquido', `Cap neto ${fmtPct(res.netCapTotal, 2)}`, 'Activo real + renta USD'],
+          ['Costos de compra', res.costsARS, res.costsUSD, res.costsARS / cap * 100, '—', '—', 'Costo no recuperable'],
+          ['FCI Money Market pesos', Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.liq / 100, (Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.liq / 100) / res.o.fx0, (Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.liq / 100) / cap * 100, 'Muy bajo', `${fmtPct(res.o.mmARSRate, 1)} TNA`, 'Liquidez + gastos desde mes 1'],
+          ['CER corto', Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.cerS / 100, (Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.cerS / 100) / res.o.fx0, (Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.cerS / 100) / cap * 100, 'Medio-bajo', `${fmtPct(res.o.cerShortReal, 1)} real`, 'Cobertura inflación baja volatilidad'],
+          ['CER medio', Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.cerM / 100, (Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.cerM / 100) / res.o.fx0, (Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.cerM / 100) / cap * 100, 'Medio', `${fmtPct(res.o.cerMedReal, 1)} real`, 'Motor de rendimiento real'],
+          ['ON hard-dollar', Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.on / 100, (Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.on / 100) / res.o.fx0, (Math.max(0, res.initialSurplusARS) * res.shareInfo.adjusted.on / 100) / cap * 100, 'Medio', `${fmtPct(res.o.onUSDRate, 1)} USD`, 'Renta y diversificación USD'],
+        ];
+        const labels = [
+          { label: 'Destino', tip: 'Bloque al que se asigna el dinero: propiedad, costos o instrumento financiero.' },
+          { label: 'Monto ARS', tip: 'Monto nominal en pesos calculado con el MEP efectivo cargado.' },
+          { label: 'Monto USD eq.', tip: 'Equivalente aproximado en dólares usando el MEP inicial. Para instrumentos en pesos es una referencia, no dólares reales.' },
+          { label: '% capital', tip: 'Peso de cada bloque sobre el capital inicial total.' },
+          { label: 'Riesgo', tip: 'Lectura cualitativa del riesgo principal: volatilidad, crédito, liquidez o concentración.' },
+          { label: 'Rendimiento usado', tip: 'Tasa o retorno supuesto en la calculadora para ese bloque. No es garantía de rendimiento.' },
+          { label: 'Rol', tip: 'Función del bloque dentro del plan: renta, liquidez, inflación, diversificación o costo.' }
+        ];
+        let html = `<thead><tr>${labels.map(l => thTip(l.label, l.tip)).join('')}</tr></thead><tbody>`;
+        rows.forEach(r => {
+          const cells = [`<strong>${r[0]}</strong>`, fmtARS(r[1]), fmtUSD(r[2], 0), fmtPct(r[3], 2), r[4], r[5], r[6]];
+          html += `<tr>${cells.map((c, i) => `<td data-label="${labels[i].label}">${c}</td>`).join('')}</tr>`;
+        });
+        const totalCells = [`<strong>Total</strong>`, `<strong>${fmtARS(cap)}</strong>`, `<strong>${fmtUSD(cap / res.o.fx0, 0)}</strong>`, `<strong>100,00%</strong>`, '', '', ''];
+        html += `<tr>${totalCells.map((c, i) => `<td data-label="${labels[i].label}">${c}</td>`).join('')}</tr>`;
+        html += `</tbody>`;
+        const table = $('allocationTable');
+        table.className = 'responsive-table allocation-table';
+        table.innerHTML = html;
+      }
+
+      function renderProjection(res) {
+        lastProjection = res.rows;
+        const labels = [
+          { label: 'Mes', tip: 'Número de mes proyectado desde el inicio del plan.' },
+          { label: 'MEP estimado', tip: 'Tipo de cambio proyectado para ese mes según la suba MEP/devaluación anual cargada.' },
+          { label: 'Gasto', tip: 'Gasto mensual requerido en USD equivalentes. Puede crecer si cargás crecimiento del gasto en USD.' },
+          { label: 'Alquiler neto', tip: 'Alquiler disponible después de descontar vacancia, mantenimiento, impuestos y otros gastos. Antes del inicio del alquiler figura USD 0.' },
+          { label: 'Rinde inversiones del mes', tip: 'Intereses/rendimientos generados ese mes por los instrumentos activos. Antes de la compra incluye la reserva de casa en liquidez USD y el excedente en MM ARS; después incluye la cartera.' },
+          { label: 'Flujo económico del mes', tip: 'Alquiler neto + rinde inversiones del mes - gasto. Sirve para ver si el mes generó superávit o déficit económico.' },
+          { label: 'Retiro desde caja/cartera', tip: 'Monto efectivamente tomado de los saldos líquidos o de la cartera para pagar el gasto del mes no cubierto por alquiler. Puede incluir rendimiento recién generado.' },
+          { label: 'Consumo neto de capital', tip: 'Parte del retiro que realmente reduce capital después de descontar el rendimiento del mes. Ejemplo: si retirás USD 1.000 y las inversiones rindieron USD 800, el consumo neto es USD 200.' },
+          { label: 'Cartera fin USD', tip: 'Valor estimado al cierre del mes de la caja/cartera disponible, expresado en USD equivalentes.' },
+          { label: 'Valor neto USD', tip: 'Cartera disponible + propiedad si ya fue comprada + reserva de casa si todavía no se compró. No descuenta impuestos ni costos de venta futuros.' },
+          { label: 'Nota', tip: 'Fase del plan aplicable en ese mes.' }
+        ];
+        let html = `<thead><tr>${labels.map(l => thTip(l.label, l.tip)).join('')}</tr></thead><tbody>`;
+        res.rows.forEach(r => {
+          const cfClass = r.cashFlowUSD >= 0 ? 'positive' : 'negative';
+          const cells = [
+            r.mes,
+            `ARS ${r.fx.toLocaleString('es-AR', { maximumFractionDigits: 0 })}`,
+            fmtUSD(r.expenseUSD, 0),
+            fmtUSD(r.rentUSD, 0),
+            fmtUSD(r.invIncomeUSD, 0),
+            `<span class="${cfClass}">${fmtUSD(r.cashFlowUSD, 0)}</span>`,
+            r.unmetUSD > 0 ? `<span class="negative">No cubierto ${fmtUSD(r.unmetUSD, 0)}</span>` : fmtUSD(r.drawUSD, 0),
+            r.netPrincipalUseUSD > 0 ? `<span class="warning">${fmtUSD(r.netPrincipalUseUSD, 0)}</span>` : fmtUSD(0, 0),
+            fmtUSD(r.portfolioUSD, 0),
+            fmtUSD(r.netWorthUSD, 0),
+            `<span class="muted">${r.note}</span>`
+          ];
+          html += `<tr>${cells.map((c, i) => `<td data-label="${labels[i].label}">${c}</td>`).join('')}</tr>`;
+        });
+        html += `</tbody>`;
+        const table = $('projectionTable');
+        table.className = 'responsive-table projection-table';
+        table.innerHTML = html;
+      }
+
+      function renderInverse(res) {
+        const maxPropDelta = res.o.propertyUSD - res.maxPropertyUSD;
+        const incomePropDelta = res.o.propertyUSD - res.maxPropertyForIncomeUSD;
+        const rentDiff = res.o.rentUSD - res.grossRentNeededUSD;
+        const items = [
+          {
+            name: '1) Alquiler para no vender cartera',
+            desc: 'Pregunta: ¿cuánto alquiler bruto debería cobrar para que alquiler neto + rinde de cartera cubran el gasto mensual?',
+            lines: [
+              ['Necesario con estos supuestos', fmtUSD(res.grossRentNeededUSD, 0)],
+              ['Alquiler bruto cargado', fmtUSD(res.o.rentUSD, 0)],
+              ['Lectura', rentDiff >= 0 ? `<span class="positive">Alcanza por ${fmtUSD(rentDiff, 0)}</span>` : `<span class="negative">Faltan ${fmtUSD(-rentDiff, 0)} brutos</span>`]
+            ]
+          },
+          {
+            name: '2) Precio para autosuficiencia mensual',
+            desc: 'Pregunta: si el alquiler bruto queda igual, ¿cuánto podría costar la propiedad para dejar una cartera suficientemente grande?',
+            lines: [
+              ['Máximo estimado', fmtUSD(res.maxPropertyForIncomeUSD, 0)],
+              ['Precio cargado', fmtUSD(res.o.propertyUSD, 0)],
+              ['Lectura', incomePropDelta <= 0 ? `<span class="positive">No exige bajar precio</span>` : `<span class="negative">Para no consumir principal, debería bajar ${fmtUSD(incomePropDelta, 0)}</span>`]
+            ]
+          },
+          {
+            name: '3) Precio máximo por caja de transición',
+            desc: 'Pregunta: ¿alcanza el capital para comprar, pagar costos y vivir hasta cobrar alquiler manteniendo colchón?',
+            lines: [
+              ['Máximo por caja', fmtUSD(res.maxPropertyUSD, 0)],
+              ['Precio cargado', fmtUSD(res.o.propertyUSD, 0)],
+              ['Lectura', maxPropDelta <= 0 ? `<span class="positive">Hay margen de ${fmtUSD(-maxPropDelta, 0)}</span>` : `<span class="negative">Excede por ${fmtUSD(maxPropDelta, 0)}</span>`]
+            ]
+          },
+          {
+            name: '4) Resultado mensual esperado',
+            desc: 'Suma alquiler neto + rendimiento sostenible estimado de la cartera. No promete cupones mensuales; mide capacidad económica.',
+            lines: [
+              ['Alquiler neto usado', fmtUSD(res.netRentUSD, 0)],
+              [labelTip('Rinde sostenible estimado', 'Promedio mensual anualizado calculado sobre la cartera esperada después de la compra/alquiler. No es el rinde de un mes específico y no incluye la reserva temporal de casa.'), fmtUSD(res.sustainablePortfolioIncomeUSDMonth, 0)],
+              ['Brecha vs gasto', res.monthlyGapUSD >= 0 ? `<span class="positive">+${fmtUSD(res.monthlyGapUSD, 0)}</span>` : `<span class="negative">-${fmtUSD(-res.monthlyGapUSD, 0)}</span>`]
+            ]
+          }
+        ];
+        $('inverseGrid').innerHTML = items.map(it => `<div class="scenario"><div class="name">${it.name}</div><p class="muted" style="font-size:12px;margin-bottom:10px">${it.desc}</p>` + it.lines.map(([a, b]) => `<div class="line"><span>${a}</span><strong>${b}</strong></div>`).join('') + `</div>`).join('');
+      }
+
+      function simulateScenario(base, changes) {
+        return calculate({ ...base, ...changes });
+      }
+      function renderScenarios(res) {
+        const o = res.o;
+        const scenarios = [
+          { name: 'Base actual', desc: 'Usa exactamente los valores cargados en los parámetros.', changed: 'Sin cambios', r: res },
+          { name: 'Alquiler bruto USD 900', desc: 'Mide qué pasa si el alquiler de mercado termina siendo más bajo.', changed: 'Alquiler bruto = USD 900', r: simulateScenario(o, { rentUSD: 900 }) },
+          { name: 'Alquiler desde mes 7', desc: 'Mide qué pasa si la compra y/o la puesta en alquiler se atrasan.', changed: 'Compra mes 6; alquiler mes 7', r: simulateScenario(o, { purchaseMonth: 6, rentStartMonth: 7 }) }
+        ];
+        $('scenarioGrid').innerHTML = scenarios.map(s => {
+          const r = s.r;
+          const end = r.rows[r.rows.length - 1];
+          const status = r.firstFailureMonth ? `<span class="negative">No cubre desde mes ${r.firstFailureMonth}</span>` : (r.monthlyGapUSD >= 0 ? `<span class="positive">No consumiría principal mensual</span>` : `<span class="warning">Consume cartera gradualmente</span>`);
+          return `<div class="scenario"><div class="name">${s.name}</div><p class="muted" style="font-size:12px;margin-bottom:10px">${s.desc}</p>` +
+            `<div class="line"><span>Qué cambia</span><strong>${s.changed}</strong></div>` +
+            `<div class="line"><span>Meses sin alquiler</span><strong>${Math.max(0, r.o.effectiveRentStart - 1)}</strong></div>` +
+            `<div class="line"><span>${labelTip('Ingreso mensual sostenible', 'Alquiler neto más rendimiento sostenible estimado de la cartera. Es una capacidad mensual promedio, no un cupón garantizado.')}</span><strong>${fmtUSD(r.totalSustainableIncomeUSD, 0)}/mes</strong></div>` +
+            `<div class="line"><span>${labelTip('Consumo neto antes de alquiler', 'Capital usado antes de empezar a cobrar alquiler, después de descontar los rendimientos generados en esos meses.')}</span><strong>${fmtUSD(r.preRentNetPrincipalUseUSD, 0)}</strong></div>` +
+            `<div class="line"><span>Cartera final</span><strong>${fmtUSD(end.portfolioUSD, 0)}</strong></div>` +
+            `<div class="line"><span>Lectura</span><strong>${status}</strong></div>` +
+            `</div>`;
+        }).join('');
+      }
+
+      function renderPhaseNotes(res) {
+        const o = res.o;
+        const preRentOk = res.preRentUnmetUSD <= 0.01 && res.initialSurplusARS >= 0;
+        const phase0Class = res.initialSurplusARS < 0 ? 'note bad' : (preRentOk ? 'note' : 'note bad');
+        $('phase0Note').className = phase0Class;
+        $('phase0Note').innerHTML = `La <strong>caja de transición</strong> cubre los meses desde el mes 1 hasta el mes anterior al primer alquiler. ` +
+          `Con tus supuestos, el alquiler empieza en el mes <strong>${o.effectiveRentStart}</strong>, así que hay <strong>${Math.max(0, o.effectiveRentStart - 1)}</strong> mes(es) sin alquiler. ` +
+          `En ese período hay gastos por <strong>${fmtUSD(res.preRentExpenseUSD, 0)}</strong>, ingresos estimados de liquidez/inversiones por <strong>${fmtUSD(res.preRentIncomeUSD, 0)}</strong> y uso neto de caja/cartera por <strong>${fmtUSD(res.preRentNetPrincipalUseUSD, 0)}</strong>. ` +
+          `La regla es cubrirlo con el excedente líquido, no con el capital reservado para comprar la casa.`;
+
+        const phaseClass = res.monthlyGapUSD >= 0 ? 'note' : 'note bad';
+        $('phase12Note').className = phaseClass;
+        $('phase12Note').innerHTML = `Desde el mes ${o.effectiveRentStart}, el alquiler bruto ingresado es <strong>${fmtUSD(o.rentUSD, 0)}/mes</strong> y el alquiler neto usado en el flujo es <strong>${fmtUSD(res.netRentUSD, 0)}/mes</strong>. ` +
+          `La cartera aporta un rendimiento sostenible estimado de <strong>${fmtUSD(res.sustainablePortfolioIncomeUSDMonth, 0)}/mes</strong>. ` +
+          (res.monthlyGapUSD >= 0 ? `Con estos supuestos, no haría falta consumir principal para cubrir los <strong>${fmtUSD(o.livingUSD, 0)}/mes</strong>.` : `Con estos supuestos, faltan <strong>${fmtUSD(-res.monthlyGapUSD, 0)}/mes</strong>; la proyección lo cubre usando la cartera en orden: liquidez → CER corto → CER medio → ON USD.`) +
+          ` La liquidez ajustada queda en <strong>${fmtPct(res.shareInfo.adjusted.liq, 1)}</strong> del excedente.`;
+
+        renderMonth1Funding(res);
+      }
+
+      function renderMonth1Funding(res) {
+        const r = res.month1;
+        if (!r) { $('month1Note').innerHTML = '—'; return; }
+        const totalIncome = r.invIncomeUSD;
+        const netUse = Math.max(0, r.expenseUSD - r.rentUSD - totalIncome);
+        const cls = r.unmetUSD > 0 ? 'note bad' : (netUse > 0 ? 'note warn' : 'note');
+        $('month1Note').className = cls;
+        $('month1Note').innerHTML = `<strong>Mes 1, chequeo de caja:</strong> no se asume alquiler salvo que el inicio de alquiler esté configurado en mes 1. ` +
+          `Con los valores actuales, el gasto es <strong>${fmtUSD(r.expenseUSD, 0)}</strong>. ` +
+          `Se estiman <strong>${fmtUSD(r.houseInterestUSD, 0)}</strong> de la reserva de casa en liquidez USD, <strong>${fmtUSD(r.mmIncomeUSD, 0)}</strong> del money market ARS y <strong>${fmtUSD(r.cerShortIncomeUSD + r.cerMedIncomeUSD + r.onIncomeUSD, 0)}</strong> de otros instrumentos. ` +
+          `Total inversiones mes 1: <strong>${fmtUSD(totalIncome, 0)}</strong>. ` +
+          (r.rentUSD > 0 ? `Además hay alquiler neto por <strong>${fmtUSD(r.rentUSD, 0)}</strong>. ` : `No hay alquiler en este mes. `) +
+          (netUse > 0 ? `El faltante de <strong>${fmtUSD(netUse, 0)}</strong> sale de la caja líquida del excedente.` : `No hace falta consumir caja líquida en este mes.`) +
+          (r.unmetUSD > 0 ? ` <span class="negative">Queda no cubierto: ${fmtUSD(r.unmetUSD, 0)}.</span>` : ``);
+      }
+
+      function renderKPIs(res) {
+        const surplusClass = res.initialSurplusARS >= 0 ? 'good' : 'bad';
+        $('kpiSurplusBox').className = 'kpi ' + surplusClass;
+        $('kpiSurplus').textContent = fmtARS(res.initialSurplusARS, true);
+        $('kpiSurplusSub').textContent = `${fmtUSD(res.initialSurplusUSD, 0)} luego de reservar ${fmtUSD(res.houseReserveUSD, 0)} para casa + costos.`;
+
+        const bridgeOk = !res.firstFailureMonth && res.initialSurplusARS >= 0;
+        $('kpiBridgeBox').className = 'kpi ' + (bridgeOk ? 'good' : 'bad');
+        $('kpiBridge').textContent = bridgeOk ? 'Cubierto' : 'Insuficiente';
+        $('kpiBridgeSub').textContent = bridgeOk ? `Gastos cubiertos desde mes 1; alquiler desde mes ${res.o.effectiveRentStart}.` : `Hay déficit de caja en el mes ${res.firstFailureMonth || 1}.`;
+
+        $('kpiIncomeBox').className = 'kpi ' + (res.monthlyGapUSD >= 0 ? 'good' : 'warn');
+        $('kpiIncome').textContent = fmtUSD(res.totalSustainableIncomeUSD, 0);
+        $('kpiIncomeSub').innerHTML = res.monthlyGapUSD >= 0 ? `Margen mensual: +${fmtUSD(res.monthlyGapUSD, 0)}.` : `Faltante mensual: ${fmtUSD(-res.monthlyGapUSD, 0)}.`;
+
+        $('kpiMaxPropBox').className = 'kpi ' + (res.o.propertyUSD <= res.maxPropertyUSD ? 'good' : 'warn');
+        $('kpiMaxProp').textContent = fmtUSD(res.maxPropertyUSD, 0);
+        $('kpiMaxPropSub').textContent = res.o.propertyUSD <= res.maxPropertyUSD ? 'Solo valida compra + caja de transición + colchón; no mide autosuficiencia mensual.' : `Excede el máximo por caja de transición en ${fmtUSD(res.o.propertyUSD - res.maxPropertyUSD, 0)}.`;
+
+        $('heroSurplus').textContent = fmtUSD(res.initialSurplusUSD, 0);
+        $('heroIncome').textContent = fmtUSD(res.totalSustainableIncomeUSD, 0);
+      }
+
+      function renderStatusAndSummary(res) {
+        const box = $('statusBox');
+        let cls = 'good', icon = '✅', title = 'Plan viable con los supuestos cargados', msg = '';
+        if (res.initialSurplusARS < 0) {
+          cls = 'bad'; icon = '⛔'; title = 'La compra no cierra con el capital actual';
+          msg = `Faltan ${fmtUSD(-res.initialSurplusUSD, 0)} para reservar propiedad + costos. Reducí precio, costos o subí capital.`;
+        } else if (res.firstFailureMonth) {
+          cls = 'bad'; icon = '⛔'; title = 'La caja se agota durante la proyección';
+          msg = `Primer mes con gasto no cubierto: ${res.firstFailureMonth}. Conviene bajar precio, aumentar alquiler, acortar la espera hasta el alquiler o subir liquidez.`;
+        } else if (res.monthlyGapUSD < 0) {
+          cls = 'warn'; icon = '⚠️'; title = 'La caja inicial está cubierta, pero el ingreso mensual no es plenamente autosuficiente';
+          msg = `Alquiler neto + rendimiento sostenible cubren ${fmtUSD(res.totalSustainableIncomeUSD, 0)} de ${fmtUSD(res.o.livingUSD, 0)}. La diferencia se cubre usando cartera.`;
+        } else if (res.houseReserveSharePct > 83) {
+          cls = 'warn'; icon = '⚠️'; title = 'Plan viable, con alta concentración inmobiliaria';
+          msg = `La reserva de propiedad + costos representa ${fmtPct(res.houseReserveSharePct, 1)} del capital. Es viable, pero el riesgo dominante es iliquidez/concentración.`;
+        } else {
+          msg = `El plan cubre gastos desde el mes 1 y luego sostiene el gasto con alquiler neto + cartera estimada.`;
+        }
+        box.className = 'status ' + cls;
+        box.innerHTML = `<div class="icon">${icon}</div><div><strong>${title}</strong><span class="muted">${msg}</span></div>`;
+        $('heroVerdict').textContent = cls === 'good' ? 'Viable' : (cls === 'warn' ? 'Viable con alertas' : 'No cierra');
+        $('heroText').textContent = msg;
+
+        const concentration = res.houseReserveSharePct > 80 ? ` La concentración en casa + costos es alta (${fmtPct(res.houseReserveSharePct, 1)} del capital), por lo que la cartera líquida queda chica.` : '';
+        const auto = res.o.autoBridge && res.shareInfo.adjusted.liq > res.shareInfo.base.liq + .01 ? ` Se aplicó el ajuste menor: la liquidez sube de ${fmtPct(res.shareInfo.base.liq, 1)} a ${fmtPct(res.shareInfo.adjusted.liq, 1)} del excedente para cubrir la transición hasta cobrar alquiler y el colchón.` : '';
+        const gapText = res.monthlyGapUSD >= 0
+          ? `El ingreso mensual sostenible supera el gasto por ${fmtUSD(res.monthlyGapUSD, 0)}.`
+          : `El ingreso mensual sostenible queda corto por ${fmtUSD(-res.monthlyGapUSD, 0)}; la diferencia se cubre usando cartera. Para no consumir principal, necesitás alquiler bruto de al menos ${fmtUSD(res.grossRentNeededUSD, 0)} o, manteniendo el alquiler bruto actual de ${fmtUSD(res.o.rentUSD, 0)}, una propiedad de hasta ${fmtUSD(res.maxPropertyForIncomeUSD, 0)}. El máximo por caja de transición es ${fmtUSD(res.maxPropertyUSD, 0)} y es otra métrica: solo dice si alcanza para comprar, cubrir los meses sin alquiler y mantener el colchón.`;
+        const html = `Con estos supuestos se reservan <strong>${fmtUSD(res.houseReserveUSD, 0)}</strong> para propiedad + costos y queda un excedente de <strong>${fmtUSD(res.initialSurplusUSD, 0)}</strong> (${fmtARS(res.initialSurplusARS, true)}). ` +
+          `Ingresaste un alquiler bruto de <strong>${fmtUSD(res.o.rentUSD, 0)}/mes</strong>; después de descontar vacancia/mantenimiento/impuestos (${fmtPct(res.o.opexPct + res.o.taxPct - (res.o.opexPct * res.o.taxPct / 100), 1)}), el alquiler neto usado para el flujo es <strong>${fmtUSD(res.netRentUSD, 0)}/mes</strong>. ` +
+          `La cartera aporta aproximadamente <strong>${fmtUSD(res.sustainablePortfolioIncomeUSDMonth, 0)}/mes</strong> de rendimiento sostenible. ${gapText}${auto}${concentration}`;
+        $('executiveSummary').className = res.initialSurplusARS < 0 ? 'note bad' : (res.monthlyGapUSD >= 0 ? 'note' : 'note warn');
+        $('executiveSummary').innerHTML = html;
+
+        lastSummaryText = html.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ');
+      }
+
+      function renderAll() {
+        const o = readInputs();
+        const res = calculate(o);
+        renderStatusAndSummary(res);
+        renderKPIs(res);
+        renderAllocationBars(res);
+        renderCapBars(res);
+        renderAllocationTable(res);
+        renderPhaseNotes(res);
+        renderInverse(res);
+        renderScenarios(res);
+        renderProjection(res);
+      }
+
+      function downloadCSV() {
+        if (!lastProjection.length) return;
+        const headers = ['mes', 'mep_estimado_ars_usd', 'gasto_usd', 'alquiler_neto_usd', 'rinde_inversiones_del_mes_usd', 'flujo_economico_del_mes_usd', 'retiro_desde_caja_cartera_usd', 'consumo_neto_de_capital_usd', 'no_cubierto_usd', 'cartera_fin_usd', 'valor_neto_usd', 'nota'];
+        const lines = [headers.join(',')];
+        lastProjection.forEach(r => {
+          const row = [r.mes, r.fx, r.expenseUSD, r.rentUSD, r.invIncomeUSD, r.cashFlowUSD, r.drawUSD, r.netPrincipalUseUSD, r.unmetUSD, r.portfolioUSD, r.netWorthUSD, r.note].map(v => `"${String(typeof v === 'number' ? v.toFixed(2) : v).replace(/"/g, '""')}"`);
+          lines.push(row.join(','));
+        });
+        const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'proyeccion_plan_retiro.csv';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function copySummary() {
+        navigator.clipboard && navigator.clipboard.writeText(lastSummaryText).then(() => {
+          const old = $('copyBtn').textContent;
+          $('copyBtn').textContent = 'Copiado';
+          setTimeout(() => $('copyBtn').textContent = old, 1200);
+        });
+      }
+
+      function reset() {
+        ids.forEach(id => {
+          if (id === 'autoBridge') $('autoBridge').checked = defaults[id];
+          else $(id).value = defaults[id];
+        });
+        renderAll();
+      }
+
+      function setupGlobalTooltips() {
+        const layer = document.createElement('div');
+        layer.className = 'tooltip-layer';
+        layer.setAttribute('role', 'tooltip');
+        layer.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(layer);
+
+        let active = null;
+        let hideTimer = null;
+        let pinned = false;
+
+        function textFor(el) {
+          return (el && (el.getAttribute('data-tip') || el.getAttribute('aria-label') || el.title || '')).trim();
+        }
+
+        function clearActiveClass() {
+          document.querySelectorAll('.tip.active').forEach(t => t.classList.remove('active'));
+        }
+
+        function position(el) {
+          if (!el || !layer.classList.contains('visible')) return;
+          const margin = 10;
+          const gap = 10;
+          const rect = el.getBoundingClientRect();
+          const maxWidth = Math.min(360, window.innerWidth - margin * 2);
+          layer.style.width = maxWidth + 'px';
+
+          // Medimos después de fijar ancho y texto.
+          const tipRect = layer.getBoundingClientRect();
+          let left = rect.left + rect.width / 2 - tipRect.width / 2;
+          left = Math.max(margin, Math.min(left, window.innerWidth - tipRect.width - margin));
+
+          let top = rect.top - tipRect.height - gap;
+          const fitsAbove = top >= margin;
+          if (!fitsAbove) {
+            top = rect.bottom + gap;
+          }
+          if (top + tipRect.height > window.innerHeight - margin) {
+            top = Math.max(margin, window.innerHeight - tipRect.height - margin);
+          }
+
+          layer.style.left = Math.round(left) + 'px';
+          layer.style.top = Math.round(top) + 'px';
+        }
+
+        function show(el, opts = {}) {
+          const text = textFor(el);
+          if (!text) return;
+          clearTimeout(hideTimer);
+          pinned = !!opts.pin;
+          active = el;
+          clearActiveClass();
+          el.classList.add('active');
+          el.setAttribute('aria-expanded', 'true');
+          layer.textContent = text;
+          layer.setAttribute('aria-hidden', 'false');
+          layer.classList.add('visible');
+          // Posicionamos dos veces: la segunda corrige si el navegador cambió alto/ancho al pintar.
+          position(el);
+          requestAnimationFrame(() => position(el));
+        }
+
+        function hide() {
+          clearTimeout(hideTimer);
+          if (active) { active.setAttribute('aria-expanded', 'false'); }
+          active = null;
+          pinned = false;
+          clearActiveClass();
+          layer.classList.remove('visible');
+          layer.setAttribute('aria-hidden', 'true');
+        }
+
+        function scheduleHide() {
+          clearTimeout(hideTimer);
+          hideTimer = setTimeout(hide, 80);
+        }
+
+        document.addEventListener('mouseover', (ev) => {
+          const el = ev.target.closest && ev.target.closest('.tip');
+          if (el && !pinned) show(el);
+        });
+        document.addEventListener('focusin', (ev) => {
+          const el = ev.target.closest && ev.target.closest('.tip');
+          if (el) show(el);
+        });
+        document.addEventListener('mouseout', (ev) => {
+          const el = ev.target.closest && ev.target.closest('.tip');
+          if (!pinned && el && (!ev.relatedTarget || !el.contains(ev.relatedTarget))) scheduleHide();
+        });
+        document.addEventListener('focusout', (ev) => {
+          const el = ev.target.closest && ev.target.closest('.tip');
+          if (el && !pinned) scheduleHide();
+        });
+        document.addEventListener('click', (ev) => {
+          const el = ev.target.closest && ev.target.closest('.tip');
+          if (el) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            if (active === el && pinned && layer.classList.contains('visible')) hide();
+            else show(el, { pin: true });
+          } else if (active) {
+            hide();
+          }
+        }, true);
+        document.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Escape') hide();
+        });
+        window.addEventListener('resize', () => active ? position(active) : null, { passive: true });
+        window.addEventListener('scroll', () => active ? position(active) : null, { passive: true });
+      }
+
+      setupGlobalTooltips();
+
+      ids.forEach(id => {
+        const el = $(id);
+        if (el) { el.addEventListener('input', renderAll); el.addEventListener('change', renderAll); }
+      });
+      $('resetBtn').addEventListener('click', reset);
+      $('printBtn').addEventListener('click', () => window.print());
+      $('csvBtn').addEventListener('click', downloadCSV);
+      $('copyBtn').addEventListener('click', copySummary);
+      $('generatedAt').textContent = new Date().toLocaleString('es-AR');
+      renderAll();
+    })();
+  </script>
+</body>
+
+</html>

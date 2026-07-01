@@ -1228,6 +1228,11 @@
       }
     }
 
+    .hint.req-active {
+      color: var(--warn);
+      font-weight: 800
+    }
+
     /* ===== Modo simple: simulación dinámica ===== */
     #modo-simple {
       margin: 0 0 26px
@@ -1814,7 +1819,9 @@
                     tabindex="0" role="button"
                     aria-label="Porcentaje del excedente asignado a caja líquida en pesos. Sirve para transición, emergencias y gastos de corto plazo."
                     data-tip="Porcentaje del excedente asignado a caja líquida en pesos. Sirve para transición, emergencias y gastos de corto plazo.">?</span></span></label><input
-                id="liqPct" type="number" value="15" step="1" /></div>
+                id="liqPct" type="number" value="15" step="1" />
+              <div class="hint" id="liqReqHint"></div>
+            </div>
             <div><label for="cerShortPct"><span class="label-with-tip"><span>CER corto (%)</span><span class="tip"
                     tabindex="0" role="button" aria-label="Porcentaje del excedente asignado a bonos/fondos CER cortos."
                     data-tip="Porcentaje del excedente asignado a bonos/fondos CER cortos.">?</span></span></label><input
@@ -2552,6 +2559,22 @@
           (r.unmetUSD > 0 ? ` <span class="negative">Queda no cubierto: ${fmtUSD(r.unmetUSD, 0)}.</span>` : ``);
       }
 
+      function renderLiqRequirement(res) {
+        const el = $('liqReqHint');
+        if (!el) return;
+        const si = res.shareInfo;
+        const req = si.requiredLiqPct, base = si.base.liq, adj = si.adjusted.liq;
+        const active = res.o.autoBridge && adj > base + 0.01;
+        el.classList.toggle('req-active', active);
+        if (active) {
+          el.innerHTML = `Mínima por transición + colchón: <strong>${fmtPct(req, 1)}</strong> → tu liquidez desplegada sube a <strong>${fmtPct(adj, 1)}</strong>.`;
+        } else if (res.o.autoBridge) {
+          el.innerHTML = `Mínima por transición + colchón: ${fmtPct(req, 1)} (tu base de ${fmtPct(base, 1)} ya la cubre).`;
+        } else {
+          el.innerHTML = `Mínima por transición + colchón: ${fmtPct(req, 1)} · auto-ajuste apagado (no se aplica).`;
+        }
+      }
+
       function renderKPIs(res) {
         const surplusClass = res.initialSurplusARS >= 0 ? 'good' : 'bad';
         $('kpiSurplusBox').className = 'kpi ' + surplusClass;
@@ -2735,6 +2758,7 @@
         renderInverse(res);
         renderScenarios(res);
         renderProjection(res);
+        renderLiqRequirement(res);
         renderSimple(res);
       }
 

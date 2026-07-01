@@ -1227,6 +1227,333 @@
         background: #777
       }
     }
+
+    /* ===== Modo simple: simulación dinámica ===== */
+    #modo-simple {
+      margin: 0 0 26px
+    }
+
+    .sim-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 14px
+    }
+
+    .sim-h {
+      font-size: clamp(20px, 2.4vw, 26px);
+      color: #10192b;
+      margin: 0 0 4px;
+      letter-spacing: -.02em
+    }
+
+    .sim-sub {
+      font-size: 15px;
+      color: var(--muted);
+      margin: 0
+    }
+
+    .sim-card {
+      background: rgba(255, 255, 255, .92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      padding: 18px;
+      margin-bottom: 14px
+    }
+
+    .sim-muted {
+      color: var(--muted);
+      font-weight: 400
+    }
+
+    .sim-stage-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px
+    }
+
+    .sim-dots {
+      display: flex;
+      gap: 8px
+    }
+
+    .sim-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--line-strong);
+      transition: background .2s, transform .2s
+    }
+
+    .sim-dot.on {
+      background: var(--brand);
+      transform: scale(1.25)
+    }
+
+    .sim-nav {
+      background: #fff;
+      color: #253756;
+      border: 1px solid var(--line-strong);
+      box-shadow: none;
+      min-height: 38px;
+      width: 44px;
+      font-size: 22px;
+      line-height: 1;
+      padding: 0;
+      border-radius: 12px
+    }
+
+    .sim-nav:disabled {
+      opacity: .4;
+      cursor: default;
+      transform: none
+    }
+
+    .sim-stage-title {
+      font-size: 19px;
+      font-weight: 900;
+      color: #111b2e;
+      margin-bottom: 6px
+    }
+
+    .sim-stage-text {
+      font-size: 17px;
+      color: #3b4b65;
+      line-height: 1.6
+    }
+
+    .sim-stage-text b {
+      color: #10192b;
+      font-weight: 850
+    }
+
+    .sim-player-head {
+      margin-bottom: 14px
+    }
+
+    .sim-month {
+      font-size: 24px;
+      font-weight: 900;
+      color: #10192b;
+      letter-spacing: -.02em
+    }
+
+    .sim-phase {
+      font-size: 16px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .sim-buckets {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 16px
+    }
+
+    .sim-bucket {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      min-width: 0
+    }
+
+    .sim-bar {
+      width: 100%;
+      max-width: 96px;
+      height: 160px;
+      background: #eef3fb;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden
+    }
+
+    .sim-fill {
+      width: 100%;
+      height: 0%;
+      border-radius: 0 0 11px 11px;
+      transition: height .55s cubic-bezier(.4, 0, .2, 1)
+    }
+
+    .b-casa .sim-fill {
+      background: linear-gradient(180deg, #5b8def, #2f6df6)
+    }
+
+    .b-mano .sim-fill {
+      background: linear-gradient(180deg, #33b98a, #127a53)
+    }
+
+    .b-infla .sim-fill {
+      background: linear-gradient(180deg, #e7b955, #c78a1e)
+    }
+
+    .b-dolar .sim-fill {
+      background: linear-gradient(180deg, #8a7bf3, #5647c9)
+    }
+
+    .sim-bname {
+      font-size: 13px;
+      font-weight: 800;
+      color: #3b4b65;
+      margin-top: 9px;
+      line-height: 1.25
+    }
+
+    .sim-bval {
+      font-size: 15px;
+      font-weight: 900;
+      color: #10192b;
+      margin-top: 2px
+    }
+
+    .sim-flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px
+    }
+
+    .sim-chip {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 9px 13px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      min-width: 96px
+    }
+
+    .sim-chip span {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800
+    }
+
+    .sim-chip b {
+      font-size: 17px;
+      color: #10192b
+    }
+
+    .sim-chip.in {
+      background: var(--good-soft);
+      border-color: #bfe8d6
+    }
+
+    .sim-chip.in b {
+      color: var(--good)
+    }
+
+    .sim-chip.out {
+      background: #fff4f6;
+      border-color: #ffd3dc
+    }
+
+    .sim-chip.out b {
+      color: var(--bad)
+    }
+
+    .sim-chip.net {
+      background: var(--good-soft);
+      border-color: #bfe8d6
+    }
+
+    .sim-chip.net b {
+      color: var(--good)
+    }
+
+    .sim-chip.warnnet {
+      background: var(--warn-soft);
+      border-color: #f1d694
+    }
+
+    .sim-chip.warnnet b {
+      color: var(--warn)
+    }
+
+    .sim-chip.bad {
+      background: var(--bad-soft);
+      border-color: #ffc0cc
+    }
+
+    .sim-chip.bad b {
+      color: var(--bad)
+    }
+
+    .sim-networth {
+      font-size: 16px;
+      color: #3b4b65;
+      padding: 11px 14px;
+      background: var(--brand-soft);
+      border: 1px solid #cfe0ff;
+      border-radius: 12px;
+      margin-bottom: 14px
+    }
+
+    .sim-networth b {
+      color: #10192b;
+      font-weight: 900
+    }
+
+    .sim-controls {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap
+    }
+
+    #simPlayBtn {
+      min-width: 150px
+    }
+
+    #simRange {
+      flex: 1;
+      min-width: 180px;
+      accent-color: var(--brand);
+      height: 8px
+    }
+
+    body.simple-mode header,
+    body.simple-mode .quick-nav,
+    body.simple-mode #configuracion,
+    body.simple-mode .results {
+      display: none !important
+    }
+
+    body.simple-mode main {
+      padding-top: 22px
+    }
+
+    @media (max-width:640px) {
+      .sim-buckets {
+        gap: 8px
+      }
+
+      .sim-bar {
+        height: 130px
+      }
+
+      .sim-bname {
+        font-size: 11.5px
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .sim-fill,
+      .sim-dot {
+        transition: none !important
+      }
+    }
   </style>
 </head>
 
@@ -1276,6 +1603,63 @@
   </nav>
 
   <main>
+    <section id="modo-simple" class="sim">
+      <div class="sim-top">
+        <div>
+          <h2 class="sim-h">El plan, paso a paso</h2>
+          <p class="sim-sub">Mirá cómo se mueve tu dinero desde que recibís el fondo, mes a mes.</p>
+        </div>
+        <button id="modeToggle" type="button" class="secondary">Ver modo simple</button>
+      </div>
+
+      <div class="sim-card sim-stages">
+        <div class="sim-stage-head">
+          <button id="simStagePrev" class="sim-nav" type="button" aria-label="Etapa anterior">‹</button>
+          <div class="sim-dots" id="simStageDots"></div>
+          <button id="simStageNext" class="sim-nav" type="button" aria-label="Etapa siguiente">›</button>
+        </div>
+        <div class="sim-stage-body">
+          <div class="sim-stage-title" id="simStageTitle">—</div>
+          <div class="sim-stage-text" id="simStageBody">—</div>
+        </div>
+      </div>
+
+      <div class="sim-card sim-player">
+        <div class="sim-player-head">
+          <div class="sim-month" id="simMonthLabel">Mes 1</div>
+          <div class="sim-phase" id="simPhase">—</div>
+        </div>
+        <div class="sim-buckets" id="simBuckets">
+          <div class="sim-bucket b-casa">
+            <div class="sim-bar"><div class="sim-fill" id="simFill_casa"></div></div>
+            <div class="sim-bname" id="simLabel_casa">🏠 Tu casa</div>
+            <div class="sim-bval" id="simVal_casa">—</div>
+          </div>
+          <div class="sim-bucket b-mano">
+            <div class="sim-bar"><div class="sim-fill" id="simFill_mano"></div></div>
+            <div class="sim-bname">💵 Plata a mano</div>
+            <div class="sim-bval" id="simVal_mano">—</div>
+          </div>
+          <div class="sim-bucket b-infla">
+            <div class="sim-bar"><div class="sim-fill" id="simFill_infla"></div></div>
+            <div class="sim-bname">📈 Sigue la inflación</div>
+            <div class="sim-bval" id="simVal_infla">—</div>
+          </div>
+          <div class="sim-bucket b-dolar">
+            <div class="sim-bar"><div class="sim-fill" id="simFill_dolar"></div></div>
+            <div class="sim-bname">💲 Ahorro en dólares</div>
+            <div class="sim-bval" id="simVal_dolar">—</div>
+          </div>
+        </div>
+        <div class="sim-flow" id="simFlow"></div>
+        <div class="sim-networth" id="simNetWorth">—</div>
+        <div class="sim-controls">
+          <button id="simPlayBtn" type="button">▶ Reproducir</button>
+          <input id="simRange" type="range" min="1" max="60" value="1" step="1" aria-label="Mes de la simulación" />
+        </div>
+      </div>
+    </section>
+
     <section id="configuracion" class="control-panel no-print">
       <div class="control-header">
         <div>
@@ -1299,17 +1683,17 @@
                     class="tip" tabindex="0" role="button"
                     aria-label="Monto total disponible al inicio, antes de reservar la propiedad, pagar costos o armar la cartera."
                     data-tip="Monto total disponible al inicio, antes de reservar la propiedad, pagar costos o armar la cartera.">?</span></span></label><input
-                id="capitalARS" type="number" value="325000000" step="100000" /></div>
+                id="capitalARS" type="number" value="325000000" step="100000" min="0" /></div>
             <div><label for="fx0"><span class="label-with-tip"><span>MEP efectivo (ARS/USD)</span><span class="tip"
                     tabindex="0" role="button"
                     aria-label="Tipo de cambio usado para convertir pesos a dólares. “Efectivo” incluye comisiones/costos operativos estimados."
                     data-tip="Tipo de cambio usado para convertir pesos a dólares. “Efectivo” incluye comisiones/costos operativos estimados.">?</span></span></label><input
-                id="fx0" type="number" value="1507.26" step="0.01" /></div>
+                id="fx0" type="number" value="1507.26" step="0.01" min="0.01" /></div>
             <div><label for="propertyUSD"><span class="label-with-tip"><span>Precio propiedad (USD)</span><span
                     class="tip" tabindex="0" role="button"
                     aria-label="Precio de compra del inmueble, sin incluir costos de escribanía, comisión, sellos u otros gastos de cierre."
                     data-tip="Precio de compra del inmueble, sin incluir costos de escribanía, comisión, sellos u otros gastos de cierre.">?</span></span></label><input
-                id="propertyUSD" type="number" value="167900" step="1000" /></div>
+                id="propertyUSD" type="number" value="167900" step="1000" min="0" /></div>
             <div><label for="costPct"><span class="label-with-tip"><span>Costos de compra (%)</span><span class="tip"
                     tabindex="0" role="button"
                     aria-label="Porcentaje adicional sobre el precio de la propiedad. Ejemplo: 7% sobre USD 180.000 equivale a USD 12.600."
@@ -1319,7 +1703,7 @@
                     class="tip" tabindex="0" role="button"
                     aria-label="Monto contractual esperado antes de descontar vacancia, mantenimiento, impuestos y otros gastos asociados al inmueble."
                     data-tip="Monto contractual esperado antes de descontar vacancia, mantenimiento, impuestos y otros gastos asociados al inmueble.">?</span></span></label><input
-                id="rentUSD" type="number" value="1000" step="50" /></div>
+                id="rentUSD" type="number" value="1000" step="50" min="0" /></div>
             <div><label for="opexPct"><span class="label-with-tip"><span>Vacancia/mant./imp. (%)</span><span class="tip"
                     tabindex="0" role="button"
                     aria-label="Descuento aplicado al alquiler bruto para estimar el alquiler neto realmente disponible para vivir."
@@ -1329,7 +1713,7 @@
                     class="tip" tabindex="0" role="button"
                     aria-label="Monto mensual que necesitás cubrir desde el mes 1 para obra social y otros gastos."
                     data-tip="Monto mensual que necesitás cubrir desde el mes 1 para obra social y otros gastos.">?</span></span></label><input
-                id="livingUSD" type="number" value="1000" step="50" /></div>
+                id="livingUSD" type="number" value="1000" step="50" min="0" /></div>
             <div><label for="taxPct"><span class="label-with-tip"><span>Impuesto sobre alquiler (%)</span><span
                     class="tip" tabindex="0" role="button"
                     aria-label="Descuento adicional sobre el alquiler luego de vacancia/mantenimiento. Dejalo en 0 hasta validarlo con contador."
@@ -1677,6 +2061,11 @@
         o.costPct = Math.max(0, o.costPct);
         o.opexPct = Math.max(0, Math.min(100, o.opexPct));
         o.taxPct = Math.max(0, Math.min(100, o.taxPct));
+        o.fx0 = o.fx0 > 0 ? o.fx0 : defaults.fx0;
+        o.capitalARS = Math.max(0, o.capitalARS);
+        o.propertyUSD = Math.max(0, o.propertyUSD);
+        o.rentUSD = Math.max(0, o.rentUSD);
+        o.livingUSD = Math.max(0, o.livingUSD);
         return o;
       }
       function fmtUSD(v, d = 0) {
@@ -1771,6 +2160,10 @@
       }
 
       function calculate(o) {
+        // Recalcula el inicio efectivo del alquiler a partir de compra/alquiler.
+        // Necesario para que los escenarios (que cambian purchaseMonth/rentStartMonth
+        // vía spread) no arrastren un effectiveRentStart obsoleto.
+        o.effectiveRentStart = Math.max(o.purchaseMonth, o.rentStartMonth);
         const capitalUSD = o.capitalARS / o.fx0;
         const propertyARS = o.propertyUSD * o.fx0;
         const costsUSD = o.propertyUSD * o.costPct / 100;
@@ -1810,6 +2203,7 @@
         let bridgeIncomeUSD = 0;
         let bridgeExpenseUSD = 0;
         let firstFailureMonth = null;
+        let bridgeFailureMonth = null;
         let minPortfolioUSD = Infinity;
 
         for (let m = 1; m <= o.horizonMonths; m++) {
@@ -1833,6 +2227,7 @@
               unmetUSD = (expenseARS - drawARS) / fx;
               state.failed = true;
               if (firstFailureMonth === null) firstFailureMonth = m;
+              if (m < o.effectiveRentStart && bridgeFailureMonth === null) bridgeFailureMonth = m;
             }
             bridgeDrawUSD += Math.max(0, expenseUSD - (houseInterestUSD + mmIncomeARS / fx));
             cashFlowUSD = houseInterestUSD + mmIncomeARS / fx - expenseUSD;
@@ -1867,6 +2262,7 @@
               if (unmetUSD > 0) {
                 state.failed = true;
                 if (firstFailureMonth === null) firstFailureMonth = m;
+                if (m < o.effectiveRentStart && bridgeFailureMonth === null) bridgeFailureMonth = m;
               }
             } else if (rentSurplusUSD > 0) {
               state.liqARS += rentSurplusUSD * fx;
@@ -1895,10 +2291,13 @@
         }
 
         // Forward-looking sustainable income just after rent starts / after purchase.
-        const startFx = o.fx0 * Math.pow(1 + rDeval, Math.max(0, o.effectiveRentStart - 1));
-        const deploymentUSDApprox = Math.max(0, initialSurplusARS) / startFx;
+        // Base = cartera real simulada en el mes en que arranca el alquiler (ya descuenta
+        // el consumo de la transición y los rendimientos reales), en vez de deflactar el
+        // excedente nominal del mes 0 por el MEP futuro (que lo subestimaba).
+        const rentStartRowIdx = Math.min(o.effectiveRentStart, o.horizonMonths) - 1;
+        const deploymentUSDApprox = rows.length ? Math.max(0, rows[Math.max(0, rentStartRowIdx)].portfolioUSD) : Math.max(0, initialSurplusUSD);
         const weightedReturnUSDAnnual = (
-          shareInfo.adjusted.liq / 100 * ((1 + o.mmARSRate / 100) / (1 + o.devalPct / 100) - 1) +
+          shareInfo.adjusted.liq / 100 * ((1 + (Math.pow(1 + o.mmARSRate / 100 / 12, 12) - 1)) / (1 + o.devalPct / 100) - 1) +
           shareInfo.adjusted.cerS / 100 * ((1 + o.inflationPct / 100) * (1 + o.cerShortReal / 100) / (1 + o.devalPct / 100) - 1) +
           shareInfo.adjusted.cerM / 100 * ((1 + o.inflationPct / 100) * (1 + o.cerMedReal / 100) / (1 + o.devalPct / 100) - 1) +
           shareInfo.adjusted.on / 100 * (o.onUSDRate / 100)
@@ -1908,7 +2307,7 @@
         const monthlyGapUSD = totalSustainableIncomeUSD - o.livingUSD;
         const netRentFactor = Math.max(0.000001, (1 - o.opexPct / 100) * (1 - o.taxPct / 100));
         const grossRentNeededUSD = Math.max(0, (o.livingUSD - sustainablePortfolioIncomeUSDMonth) / netRentFactor);
-        const fxGrowthToIncomeStart = startFx / o.fx0;
+        const fxGrowthToIncomeStart = 1;
         const surplusNeededForIncomeUSDAtStart = (o.livingUSD > netRentUSD && weightedReturnUSDAnnual > 0)
           ? (o.livingUSD - netRentUSD) * 12 / weightedReturnUSDAnnual
           : 0;
@@ -1935,7 +2334,7 @@
 
         return {
           o, capitalUSD, propertyARS, costsUSD, costsARS, houseReserveUSD, houseReserveARS, initialSurplusARS, initialSurplusUSD,
-          netRentUSD, shareInfo, rows, bridgeDrawUSD, bridgeIncomeUSD, bridgeExpenseUSD, firstFailureMonth, minPortfolioUSD,
+          netRentUSD, shareInfo, rows, bridgeDrawUSD, bridgeIncomeUSD, bridgeExpenseUSD, firstFailureMonth, bridgeFailureMonth, minPortfolioUSD,
           weightedReturnUSDAnnual, sustainablePortfolioIncomeUSDMonth, totalSustainableIncomeUSD, monthlyGapUSD, grossRentNeededUSD,
           bridgeMonthsBeforeRent, conservativeBridgeNeedUSD, minimumLiquidUSD, maxPropertyUSD, maxPropertyForIncomeUSD,
           surplusNeededForIncomeUSDAtStart, propertySharePct, houseReserveSharePct, netCapTotal, grossCapPrice, grossCapTotal,
@@ -2159,10 +2558,11 @@
         $('kpiSurplus').textContent = fmtARS(res.initialSurplusARS, true);
         $('kpiSurplusSub').textContent = `${fmtUSD(res.initialSurplusUSD, 0)} luego de reservar ${fmtUSD(res.houseReserveUSD, 0)} para casa + costos.`;
 
-        const bridgeOk = !res.firstFailureMonth && res.initialSurplusARS >= 0;
+        const bridgeOk = !res.bridgeFailureMonth && res.initialSurplusARS >= 0;
         $('kpiBridgeBox').className = 'kpi ' + (bridgeOk ? 'good' : 'bad');
         $('kpiBridge').textContent = bridgeOk ? 'Cubierto' : 'Insuficiente';
-        $('kpiBridgeSub').textContent = bridgeOk ? `Gastos cubiertos desde mes 1; alquiler desde mes ${res.o.effectiveRentStart}.` : `Hay déficit de caja en el mes ${res.firstFailureMonth || 1}.`;
+        const lateDepletion = bridgeOk && res.firstFailureMonth ? ` Ojo: la cartera igual se agota más tarde, en el mes ${res.firstFailureMonth} (no es un problema de transición).` : '';
+        $('kpiBridgeSub').textContent = bridgeOk ? `Gastos cubiertos desde mes 1 hasta el alquiler (mes ${res.o.effectiveRentStart}).` + lateDepletion : `Déficit de caja en la transición, mes ${res.bridgeFailureMonth || 1}.`;
 
         $('kpiIncomeBox').className = 'kpi ' + (res.monthlyGapUSD >= 0 ? 'good' : 'warn');
         $('kpiIncome').textContent = fmtUSD(res.totalSustainableIncomeUSD, 0);
@@ -2182,9 +2582,12 @@
         if (res.initialSurplusARS < 0) {
           cls = 'bad'; icon = '⛔'; title = 'La compra no cierra con el capital actual';
           msg = `Faltan ${fmtUSD(-res.initialSurplusUSD, 0)} para reservar propiedad + costos. Reducí precio, costos o subí capital.`;
+        } else if (res.bridgeFailureMonth) {
+          cls = 'bad'; icon = '⛔'; title = 'No se cubren los gastos durante la transición';
+          msg = `Primer mes sin cubrir: ${res.bridgeFailureMonth}, antes de cobrar alquiler. Conviene bajar precio/costos, acortar la espera hasta el alquiler o subir liquidez.`;
         } else if (res.firstFailureMonth) {
-          cls = 'bad'; icon = '⛔'; title = 'La caja se agota durante la proyección';
-          msg = `Primer mes con gasto no cubierto: ${res.firstFailureMonth}. Conviene bajar precio, aumentar alquiler, acortar la espera hasta el alquiler o subir liquidez.`;
+          cls = 'bad'; icon = '⛔'; title = 'La cartera se agota más adelante en la proyección';
+          msg = `La transición está cubierta, pero el gasto supera al ingreso y la cartera se agota en el mes ${res.firstFailureMonth}. Conviene bajar precio, subir alquiler o reducir gasto.`;
         } else if (res.monthlyGapUSD < 0) {
           cls = 'warn'; icon = '⚠️'; title = 'La caja inicial está cubierta, pero el ingreso mensual no es plenamente autosuficiente';
           msg = `Alquiler neto + rendimiento sostenible cubren ${fmtUSD(res.totalSustainableIncomeUSD, 0)} de ${fmtUSD(res.o.livingUSD, 0)}. La diferencia se cubre usando cartera.`;
@@ -2213,6 +2616,113 @@
         lastSummaryText = html.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ');
       }
 
+      // ===== Modo simple: simulación dinámica (etapas + reproductor mes a mes) =====
+      let simRes = null, simMonth = 1, simStage = 0, simTimer = null, simMax = { casa: 1, savings: 1 };
+      const SIM_STAGES = 5;
+
+      function bucketsFor(r) {
+        return {
+          casa: r.propertyValueUSD > 0 ? r.propertyValueUSD : r.houseReserveVisibleUSD,
+          mano: (r.prePurchaseCashARS + r.liqARS) / r.fx,
+          infla: (r.cerShortARS + r.cerMedARS) / r.fx,
+          dolar: r.onUSD
+        };
+      }
+
+      function phaseTextFor(r, res) {
+        if (r.propertyValueUSD <= 0) return 'Todavía no compraste la casa: la reserva espera en dólares y vivís de la plata a mano.';
+        if (r.mes === res.o.purchaseMonth) return '¡Compraste la casa! Con lo que sobró armaste tu ahorro en tres frascos.';
+        if (r.rentUSD > 0) return 'Cobrás el alquiler y tus ahorros rinden. Con eso pagás tus gastos.';
+        return 'Ya es tuya la casa; el alquiler todavía no arrancó, así que vivís de la plata a mano.';
+      }
+
+      function renderSimStage() {
+        const res = simRes; if (!res) return;
+        const rowBuy = res.rows[Math.min(res.o.purchaseMonth, res.o.horizonMonths) - 1] || res.rows[res.rows.length - 1];
+        const b = bucketsFor(rowBuy);
+        const stages = [
+          { t: '1 · Recibís el fondo de tu retiro', body: `Tenés <b>${fmtUSD(res.capitalUSD, 0)}</b> para tu retiro <span class="sim-muted">(unos ${fmtARS(res.o.capitalARS, true)})</span>. Con esto se arma todo el plan.` },
+          { t: '2 · Separás la plata de la casa', body: `Guardás <b>${fmtUSD(res.houseReserveUSD, 0)}</b> en dólares para comprar la casa y pagar los gastos de la compra. Aparte te queda un ahorro de <b>${fmtUSD(res.initialSurplusUSD, 0)}</b>.` },
+          { t: '3 · Comprás la casa', body: `Comprás la casa por <b>${fmtUSD(res.o.propertyUSD, 0)}</b> (más ${fmtUSD(res.houseReserveUSD - res.o.propertyUSD, 0)} de gastos de compra). Desde ahora es <b>tuya</b> y se va a alquilar.` },
+          { t: '4 · Armás tu ahorro en tres frascos', body: `Ese ahorro no queda quieto: se reparte en <b>plata a mano ${fmtUSD(b.mano, 0)}</b>, <b>ahorro que sigue la inflación ${fmtUSD(b.infla, 0)}</b> y <b>ahorro en dólares ${fmtUSD(b.dolar, 0)}</b>. Así no está todo en un solo lugar.` },
+          { t: '5 · Y todos los meses…', body: `Cada mes entra el <b>alquiler</b> y lo que <b>rinden tus ahorros</b>, y de ahí salen tus <b>gastos</b>. En total el plan te da cerca de <b>${fmtUSD(res.totalSustainableIncomeUSD, 0)}/mes</b> para cubrir unos ${fmtUSD(res.o.livingUSD, 0)}. Mirá cómo se mueve mes a mes acá abajo 👇` }
+        ];
+        simStage = clamp(simStage, 0, stages.length - 1);
+        const s = stages[simStage];
+        $('simStageTitle').textContent = s.t;
+        $('simStageBody').innerHTML = s.body;
+        $('simStageDots').innerHTML = stages.map((_, i) => `<span class="sim-dot${i === simStage ? ' on' : ''}"></span>`).join('');
+        $('simStagePrev').disabled = simStage === 0;
+        $('simStageNext').disabled = simStage === stages.length - 1;
+      }
+
+      function renderSimScaffold(res) {
+        let mc = 1, ms = 1;
+        res.rows.forEach(r => { const b = bucketsFor(r); mc = Math.max(mc, b.casa); ms = Math.max(ms, b.mano, b.infla, b.dolar); });
+        simMax = { casa: mc, savings: ms };
+      }
+
+      function renderSimMonth(m) {
+        const res = simRes; if (!res || !res.rows.length) return;
+        m = clamp(Math.round(m), 1, res.rows.length);
+        simMonth = m;
+        const r = res.rows[m - 1];
+        const b = bucketsFor(r);
+        $('simRange').value = m;
+        $('simMonthLabel').textContent = 'Mes ' + m;
+        $('simPhase').textContent = phaseTextFor(r, res);
+        const setB = (key, val, max) => {
+          $('simFill_' + key).style.height = clamp(val / max * 100, 0, 100) + '%';
+          $('simVal_' + key).textContent = fmtUSD(val, 0);
+        };
+        setB('casa', b.casa, simMax.casa);
+        setB('mano', b.mano, simMax.savings);
+        setB('infla', b.infla, simMax.savings);
+        setB('dolar', b.dolar, simMax.savings);
+        $('simLabel_casa').textContent = r.propertyValueUSD > 0 ? '🏠 Tu casa' : '🏠 Casa (reservada)';
+        const chip = (val, cls, prefix) => `<div class="sim-chip ${cls}"><span>${prefix}</span><b>${fmtUSD(Math.abs(val), 0)}</b></div>`;
+        let flow = chip(r.rentUSD, 'in', '+ alquiler') + chip(r.invIncomeUSD, 'in', '+ rinde') + chip(r.expenseUSD, 'out', '− gastos');
+        if (r.unmetUSD > 0) flow += `<div class="sim-chip bad"><span>faltó</span><b>${fmtUSD(r.unmetUSD, 0)}</b></div>`;
+        else flow += `<div class="sim-chip ${r.cashFlowUSD >= 0 ? 'net' : 'warnnet'}"><span>= queda</span><b>${(r.cashFlowUSD >= 0 ? '+' : '−') + fmtUSD(Math.abs(r.cashFlowUSD), 0)}</b></div>`;
+        $('simFlow').innerHTML = flow;
+        $('simNetWorth').innerHTML = `Tu patrimonio total este mes: <b>${fmtUSD(r.netWorthUSD, 0)}</b>`;
+      }
+
+      function syncSimRange(res) {
+        const rng = $('simRange');
+        rng.min = 1; rng.max = Math.max(1, res.rows.length);
+        simMonth = clamp(simMonth, 1, res.rows.length);
+      }
+
+      function simSetPlaying(on) {
+        const btn = $('simPlayBtn');
+        if (on && simRes && simRes.rows.length > 1) {
+          if (simMonth >= simRes.rows.length) simMonth = 1;
+          simTimer = setInterval(() => {
+            if (!simRes || simMonth >= simRes.rows.length) { simSetPlaying(false); return; }
+            renderSimMonth(simMonth + 1);
+          }, 700);
+          btn.textContent = '⏸ Pausar';
+        } else {
+          clearInterval(simTimer); simTimer = null;
+          btn.textContent = '▶ Reproducir';
+        }
+      }
+
+      function toggleSimpleMode() {
+        const on = document.body.classList.toggle('simple-mode');
+        $('modeToggle').textContent = on ? 'Volver al modo experto' : 'Ver modo simple';
+        if (on) { try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { } }
+      }
+
+      function renderSimple(res) {
+        simRes = res;
+        renderSimScaffold(res);
+        syncSimRange(res);
+        renderSimStage();
+        renderSimMonth(simMonth);
+      }
+
       function renderAll() {
         const o = readInputs();
         const res = calculate(o);
@@ -2225,6 +2735,7 @@
         renderInverse(res);
         renderScenarios(res);
         renderProjection(res);
+        renderSimple(res);
       }
 
       function downloadCSV() {
@@ -2246,12 +2757,36 @@
         URL.revokeObjectURL(url);
       }
 
+      function flashCopyBtn(label, ms = 1200) {
+        const btn = $('copyBtn');
+        if (btn.dataset.orig === undefined) btn.dataset.orig = btn.textContent;
+        btn.textContent = label;
+        clearTimeout(flashCopyBtn._t);
+        flashCopyBtn._t = setTimeout(() => { btn.textContent = btn.dataset.orig; }, ms);
+      }
+      function fallbackCopy(text) {
+        // navigator.clipboard suele no existir en file:// — usamos execCommand como respaldo.
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '-1000px';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        let ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        ta.remove();
+        flashCopyBtn(ok ? 'Copiado' : 'No se pudo copiar', ok ? 1200 : 1600);
+      }
       function copySummary() {
-        navigator.clipboard && navigator.clipboard.writeText(lastSummaryText).then(() => {
-          const old = $('copyBtn').textContent;
-          $('copyBtn').textContent = 'Copiado';
-          setTimeout(() => $('copyBtn').textContent = old, 1200);
-        });
+        const text = lastSummaryText;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => flashCopyBtn('Copiado')).catch(() => fallbackCopy(text));
+        } else {
+          fallbackCopy(text);
+        }
       }
 
       function reset() {
@@ -2383,6 +2918,11 @@
       $('printBtn').addEventListener('click', () => window.print());
       $('csvBtn').addEventListener('click', downloadCSV);
       $('copyBtn').addEventListener('click', copySummary);
+      $('modeToggle').addEventListener('click', toggleSimpleMode);
+      $('simStagePrev').addEventListener('click', () => { simStage--; renderSimStage(); });
+      $('simStageNext').addEventListener('click', () => { simStage++; renderSimStage(); });
+      $('simPlayBtn').addEventListener('click', () => simSetPlaying(!simTimer));
+      $('simRange').addEventListener('input', (e) => { if (simTimer) simSetPlaying(false); renderSimMonth(+e.target.value); });
       $('generatedAt').textContent = new Date().toLocaleString('es-AR');
       renderAll();
     })();
